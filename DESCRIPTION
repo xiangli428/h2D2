@@ -1,0 +1,28 @@
+Encoding: UTF-8
+Package: h2D2
+Type: Package
+Title: Heritability-induced Dirichlet Decomposition
+Version: 1.0
+Date: 2023-07-30
+Authors@R:
+    c(person("Xiang", "Li", email = "freddyl@connect.hku.hk",
+        role = c("aut","cre")),
+      person("Yan Dora", "Zhang", email = "doraz@hku.hk",
+        role = c("aut")))
+Description: This package implements a fine-mapping method based on the 
+    "heritability-induced Dirichlet Decomposition" (h2-D2) prior,
+    as described in 
+    https://www.medrxiv.org/content/10.1101/2023.08.04.23293456v1.
+    It is a novel fine-mapping method that utilizes a continuous global-local 
+    shrinkage prior.
+    This method can be applied to both quantitative and binary traits.
+    An MCMC algorithm is employed to obtain samples from the posterior 
+    distribution.
+    This method can also provide "credible sets" of candidate
+    causal variants, which are generally provided by fine-mapping methods
+    based on discrete-mixture priors.
+URL: https://github.com/xiangli428/h2D2
+License: GPL(>=2)
+Imports: Rcpp (>= 1.0.9), RcppEigen, Matrix, foreach, dplyr
+LinkingTo: Rcpp, RcppEigen
+RoxygenNote: 7.1.1
