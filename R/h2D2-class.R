@@ -31,7 +31,7 @@
 #' credible sets.
 #' @slot purity A number between 0 and 1 specifying the minimum absolute 
 #' correlation allowed in a credible set.
-#' @slot CS A list of identified credible sets.
+#' @slot CS A list of identified credible sets. See \code{\link{credible_sets}}.
 #' 
 #' @export
 

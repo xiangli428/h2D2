@@ -3,13 +3,40 @@
 #' @description 
 #' Create an h2D2 object from GWAS summary statistics and an LD matrix estimate.
 #' GWAS summary data, h2-D2 hyper-parameters, and useful variables are stored.
+#' 
+#' @usage 
+#' For quantitative traits,
+#' h2D2 = Createh2D2Object(betaHat,
+#'                         sigmaHat,
+#'                         R,
+#'                         SNP_ID = NULL,
+#'                         trait = "quantitative",
+#'                         N,
+#'                         a = 0.005,
+#'                         b = 2e5,
+#'                         coverage = 0.95,
+#'                         purity = 0.5)
+#' 
+#' For binary traits,
+#' h2D2 = Createh2D2Object(betaHat,
+#'                         sigmaHat,
+#'                         R,
+#'                         SNP_ID = NULL,
+#'                         trait = "binary",
+#'                         N1,
+#'                         N0,
+#'                         a = 0.005,
+#'                         b = 2e5,
+#'                         coverage = 0.95,
+#'                         purity = 0.5)
 #'
 #' @param betaHat M-vector of standardized effect sizes. Per-allele effect sizes
 #' should be multiplied by sqrt(2\*MAF\*(1-MAF)) before input.
 #' @param sigmaHat M-vector of standard errors of standardized effect sizes.
 #' Standard errors of per-allele effect sizes should be multiplied by 
 #' sqrt(2\*MAF\*(1-MAF)) before input.
-#' @param R An M-by-M LD matrix that can be coerced to "dsCMatrix".
+#' @param R An M-by-M LD matrix that can be coerced to 
+#' \code{\link[Matrix]{dsCMatrix-class}}.
 #' The diagonal elements should be set as 0s.
 #' @param SNP_ID Identifiers of SNPs. The default is c("SNP_1", ...).
 #' @param trait One of "quantitative" or "binary".
@@ -23,6 +50,8 @@
 #' of the credible sets.
 #' @param purity A number between 0 and 1 specifying the minimum 
 #' absolute correlation allowed in a credible set.
+#' 
+#' @return An h2D2 object. See \code{\link{h2D2-class}}.
 #' 
 #' @export
 

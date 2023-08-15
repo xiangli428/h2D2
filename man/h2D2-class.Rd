@@ -58,6 +58,6 @@ credible sets.}
 \item{\code{purity}}{A number between 0 and 1 specifying the minimum absolute 
 correlation allowed in a credible set.}
 
-\item{\code{CS}}{A list of identified credible sets.}
+\item{\code{CS}}{A list of identified credible sets. See \code{\link{credible_sets}}.}
 }}
 

@@ -15,6 +15,15 @@ of the credible sets.}
 \item{purity}{A number between 0 and 1 specifying the minimum 
 absolute correlation allowed in a credible set.}
 }
+\value{
+A list with the following elements:
+\describe{
+  \item{sets}{A list in which each element is a vector containing the
+  indices of the variables in the CS.}
+  \item{CL}{The credible level of each CS.}
+  \item{purity}{The purity of each CS.}
+}
+}
 \description{
 A greedy search algorithm to identify all credible sets achieving target
 "coverage" with minimum absolute correlation not less than "purity".

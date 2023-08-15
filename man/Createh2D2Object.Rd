@@ -4,20 +4,30 @@
 \alias{Createh2D2Object}
 \title{Create an h2D2 object.}
 \usage{
-Createh2D2Object(
-  betaHat,
-  sigmaHat,
-  R,
-  SNP_ID = NULL,
-  trait = "quantitative",
-  N = NULL,
-  N1 = NULL,
-  N0 = NULL,
-  a = 0.005,
-  b = 2e+05,
-  coverage = 0.95,
-  purity = 0.5
-)
+For quantitative traits,
+h2D2 = Createh2D2Object(betaHat,
+                        sigmaHat,
+                        R,
+                        SNP_ID = NULL,
+                        trait = "quantitative",
+                        N,
+                        a = 0.005,
+                        b = 2e5,
+                        coverage = 0.95,
+                        purity = 0.5)
+
+For binary traits,
+h2D2 = Createh2D2Object(betaHat,
+                        sigmaHat,
+                        R,
+                        SNP_ID = NULL,
+                        trait = "binary",
+                        N1,
+                        N0,
+                        a = 0.005,
+                        b = 2e5,
+                        coverage = 0.95,
+                        purity = 0.5)
 }
 \arguments{
 \item{betaHat}{M-vector of standardized effect sizes. Per-allele effect sizes
@@ -27,7 +37,8 @@ should be multiplied by sqrt(2\*MAF\*(1-MAF)) before input.}
 Standard errors of per-allele effect sizes should be multiplied by 
 sqrt(2\*MAF\*(1-MAF)) before input.}
 
-\item{R}{An M-by-M LD matrix that can be coerced to "dsCMatrix".
+\item{R}{An M-by-M LD matrix that can be coerced to 
+\code{\link[Matrix]{dsCMatrix-class}}.
 The diagonal elements should be set as 0s.}
 
 \item{SNP_ID}{Identifiers of SNPs. The default is c("SNP_1", ...).}
@@ -50,6 +61,9 @@ of the credible sets.}
 
 \item{purity}{A number between 0 and 1 specifying the minimum 
 absolute correlation allowed in a credible set.}
+}
+\value{
+An h2D2 object. See \code{\link{h2D2-class}}.
 }
 \description{
 Create an h2D2 object from GWAS summary statistics and an LD matrix estimate.

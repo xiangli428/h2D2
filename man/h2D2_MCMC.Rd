@@ -4,8 +4,8 @@
 \alias{h2D2_MCMC}
 \title{MCMC sampling under h2-D2 prior.}
 \usage{
-h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, thin = 1, 
-stepsize = 2, seed = 428)
+h2D2 = h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, 
+                 thin = 1, stepsize = 2, seed = 428)
 }
 \arguments{
 \item{h2D2}{An h2D2 object.}
@@ -22,7 +22,7 @@ indicating no thinning.}
 \item{seed}{Random seed for MCMC sampling.}
 }
 \value{
-An h2D2 object with MCMC samples.
+An h2D2 object with MCMC samples. See \code{\link{h2D2-class}}.
 }
 \description{
 Using MCMC sampler to fit posterior distribution under h2-D2 prior.

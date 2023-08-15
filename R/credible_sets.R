@@ -10,6 +10,14 @@
 #' @param purity A number between 0 and 1 specifying the minimum 
 #' absolute correlation allowed in a credible set.
 #' 
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{sets}{A list in which each element is a vector containing the
+#'   indices of the variables in the CS.}
+#'   \item{CL}{The credible level of each CS.}
+#'   \item{purity}{The purity of each CS.}
+#' }
+#' 
 #' @export
 
 credible_sets = function(h2D2, coverage = 0.95, purity = 0.5)
@@ -22,14 +30,14 @@ credible_sets = function(h2D2, coverage = 0.95, purity = 0.5)
                   "CL" = h2D2@CL)
   CL = arrange(CL, -CL, index)
   
-  CS = list("sets" = list(), "coverage" = c())
+  CS = list("sets" = list(), "CL" = c())
   n1 = sum(CL$CL > coverage)
   if(n1 > 0)
   {
     for(r in 1:n1)
     {
       CS$sets[[r]] = CL$index[r]
-      CS$coverage[r] = CL$CL[r]
+      CS$CL[r] = CL$CL[r]
     }
   }
   r = length(CS$sets) + 1
@@ -65,7 +73,7 @@ credible_sets = function(h2D2, coverage = 0.95, purity = 0.5)
         if(tmp_CL > coverage)
         {
           CS$sets[[r]] = sort(set)
-          CS$coverage[r] = tmp_CL
+          CS$CL[r] = tmp_CL
           r = r + 1
           candidate = setdiff(candidate, set)
           discard = setdiff(discard, set)

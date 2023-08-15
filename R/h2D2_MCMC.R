@@ -4,8 +4,8 @@
 #' Using MCMC sampler to fit posterior distribution under h2-D2 prior.
 #' 
 #' @usage
-#' h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, thin = 1, 
-#' stepsize = 2, seed = 428)
+#' h2D2 = h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, 
+#'                  thin = 1, stepsize = 2, seed = 428)
 #' 
 #' @param h2D2 An h2D2 object.
 #' @param mcmc_n Number of posterior samples to generate.
@@ -15,7 +15,7 @@
 #' @param stepsize Step size for proposal.
 #' @param seed Random seed for MCMC sampling.
 #' 
-#' @return An h2D2 object with MCMC samples.
+#' @return An h2D2 object with MCMC samples. See \code{\link{h2D2-class}}.
 #' 
 #' @import Matrix
 #' @export
