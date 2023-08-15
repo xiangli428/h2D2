@@ -357,12 +357,12 @@ pre code {
 <div id="quick-start" class="section level2">
 <h2>Quick Start</h2>
 <div id="install-h2d2-from-github" class="section level3">
-<h3>1. Install <code>h2D2</code> from GitHub:</h3>
+<h3>1. Install <code>h2D2</code> from GitHub</h3>
 <pre><code>devtools::install_github(&quot;https://github.com/xiangli428/h2D2&quot;)
 library(h2D2)</code></pre>
 </div>
-<div id="create-an-h2d2-object-with-summary-data." class="section level3">
-<h3>2. Create an h2D2 object with summary data.</h3>
+<div id="create-an-h2d2-object-with-summary-data" class="section level3">
+<h3>2. Create an h2D2 object with summary data</h3>
 <p>For quantitative traits,</p>
 <pre><code>h2D2 = Createh2D2Object(betaHat,
                         sigmaHat,
@@ -388,13 +388,13 @@ library(h2D2)</code></pre>
                         purity = 0.5)</code></pre>
 <p>where <code>a</code> and <code>b</code> specify the hyperparameters of the prior.</p>
 </div>
-<div id="mcmc-sampling." class="section level3">
-<h3>3. MCMC sampling.</h3>
+<div id="mcmc-sampling" class="section level3">
+<h3>3. MCMC sampling</h3>
 <pre><code>h2D2 = h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, 
                  thin = 1, stepsize = 2, seed = 428)</code></pre>
 </div>
-<div id="results." class="section level3">
-<h3>4. Results.</h3>
+<div id="results" class="section level3">
+<h3>4. Results</h3>
 <p>Credible levels of SNPs:</p>
 <pre><code>h2D2@CL</code></pre>
 <p>95% Credible sets:</p>

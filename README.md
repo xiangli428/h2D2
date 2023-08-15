@@ -13,12 +13,12 @@ based on discrete-mixture priors.
 
 ## Quick Start
 
-### 1. Install `h2D2` from GitHub:
+### 1. Install `h2D2` from GitHub
 ```
 devtools::install_github("https://github.com/xiangli428/h2D2")
 library(h2D2)
 ```
-### 2. Create an h2D2 object with summary data.
+### 2. Create an h2D2 object with summary data
 
 For quantitative traits,
 ```
@@ -49,14 +49,14 @@ h2D2 = Createh2D2Object(betaHat,
 ```
 where `a` and `b` specify the hyperparameters of the prior.
 
-### 3. MCMC sampling.
+### 3. MCMC sampling
 
 ```
 h2D2 = h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, 
                  thin = 1, stepsize = 2, seed = 428)
 ```
 
-### 4. Results.
+### 4. Results
 
 Credible levels of SNPs:
 ```
