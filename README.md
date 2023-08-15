@@ -50,12 +50,14 @@ h2D2 = Createh2D2Object(betaHat,
 where `a` and `b` specify the hyperparameters of the prior.
 
 ### 3. MCMC sampling.
+
 ```
 h2D2 = h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, 
                  thin = 1, stepsize = 2, seed = 428)
 ```
 
-### 4. Results
+### 4. Results.
+
 Credible levels of SNPs:
 ```
 h2D2@CL
