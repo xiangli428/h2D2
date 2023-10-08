@@ -212,8 +212,8 @@ void h2D2_sampling(S4 h2D2,
         {
           psi(j) = 1;
         } else {
-          nu_j = exp(log_sigma2(j)/2) / (abs(beta(j)) * scale);
-          psi(j) = 1 / rinvGauss(nu_j, 1);
+          nu_j = sqrt(2) * exp(log_sigma2(j)/2) / (abs(beta(j)) * scale);
+          psi(j) = 1 / rinvGauss(nu_j, 2);
         }
       }
     }
