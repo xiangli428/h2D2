@@ -79,7 +79,7 @@ void h2D2_sampling(S4 h2D2,
   // Hyper parameters
   const VectorXd a = h2D2.slot("a");
   const double b = h2D2.slot("b");
-  const double scale = sqrt(scale2);
+  const double scale = sqrt(scale2 / 2);
   
   // Initial samples
   int i = 0;
@@ -212,7 +212,7 @@ void h2D2_sampling(S4 h2D2,
         {
           psi(j) = 1;
         } else {
-          nu_j = sqrt(2) * exp(log_sigma2(j)/2) / (abs(beta(j)) * scale);
+          nu_j = exp(log_sigma2(j)/2) / (abs(beta(j)) * scale);
           psi(j) = 1 / rinvGauss(nu_j, 2);
         }
       }
