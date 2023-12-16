@@ -22,11 +22,9 @@ credible sets. Objects can be created by Createh2D2Object.
 
 \item{\code{SNP_ID}}{IDs of SNPs. A character vector of size M.}
 
-\item{\code{betaHat}}{An M-vector of marginal effect size estimates.}
-
-\item{\code{S}}{An M-vector of standard errors of marginal effect size estimates.}
-
 \item{\code{z}}{An M-vector of z-scores.}
+
+\item{\code{betaHat}}{An M-vector of marginal effect size estimates.}
 
 \item{\code{R}}{An M-by-M correlation matrix in \code{\link[Matrix]{dsCMatrix-class}} 
 format. The diagonal elements are set as 0.}

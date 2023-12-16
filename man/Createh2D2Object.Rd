@@ -5,45 +5,34 @@
 \title{Create an h2D2 object.}
 \usage{
 For quantitative traits,
-h2D2 = Createh2D2Object(betaHat,
-                        sigmaHat,
+h2D2 = Createh2D2Object(z,
                         R,
+                        N,
                         SNP_ID = NULL,
                         trait = "quantitative",
-                        N,
+                        in_sample_LD = F,
                         a = 0.005,
-                        b = 2e5,
                         coverage = 0.95,
                         purity = 0.5)
 
 For binary traits,
-h2D2 = Createh2D2Object(betaHat,
-                        sigmaHat,
+h2D2 = Createh2D2Object(z,
                         R,
-                        SNP_ID = NULL,
-                        trait = "binary",
                         N1,
                         N0,
+                        SNP_ID = NULL,
+                        trait = "binary",
+                        in_sample_LD = F,
                         a = 0.005,
-                        b = 2e5,
                         coverage = 0.95,
                         purity = 0.5)
 }
 \arguments{
-\item{betaHat}{M-vector of standardized effect sizes. Per-allele effect sizes
-should be multiplied by sqrt(2\*MAF\*(1-MAF)) before input.}
-
-\item{sigmaHat}{M-vector of standard errors of standardized effect sizes.
-Standard errors of per-allele effect sizes should be multiplied by 
-sqrt(2\*MAF\*(1-MAF)) before input.}
+\item{z}{M-vector of z-scores.}
 
 \item{R}{An M-by-M LD matrix that can be coerced to 
 \code{\link[Matrix]{dsCMatrix-class}}.
 The diagonal elements should be set as 0s.}
-
-\item{SNP_ID}{Identifiers of SNPs. The default is c("SNP_1", ...).}
-
-\item{trait}{One of "quantitative" or "binary".}
 
 \item{N}{The sample size. Required for quantitative traits.}
 
@@ -51,10 +40,16 @@ The diagonal elements should be set as 0s.}
 
 \item{N0}{Number of controls. Required for binary traits.}
 
+\item{SNP_ID}{Identifiers of SNPs. The default is c("SNP_1", ...).}
+
+\item{trait}{One of "quantitative" or "binary".}
+
+\item{in_sample_LD}{Whether the LD matrix is in-sample.}
+
 \item{a}{Shape parameters for sigma^2. Either a positive real number or an
 M-vector of positive real numbers.}
 
-\item{b}{Shape parameters for 1-h^2. A positive real number.}
+\item{b}{Shape parameter for 1-h^2. A positive real number.}
 
 \item{coverage}{A number between 0 and 1 specifying the "coverage"
 of the credible sets.}

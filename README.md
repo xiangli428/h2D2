@@ -22,28 +22,26 @@ library(h2D2)
 
 For quantitative traits,
 ```
-h2D2 = Createh2D2Object(betaHat,
-                        sigmaHat,
+h2D2 = Createh2D2Object(z,
                         R,
+                        N,
                         SNP_ID = NULL,
                         trait = "quantitative",
-                        N,
+                        in_sample_LD = F,
                         a = 0.005,
-                        b = 2e5,
                         coverage = 0.95,
                         purity = 0.5)
 ```
 For binary traits,
 ```
-h2D2 = Createh2D2Object(betaHat,
-                        sigmaHat,
+h2D2 = Createh2D2Object(z,
                         R,
-                        SNP_ID = NULL,
-                        trait = "binary",
                         N1,
                         N0,
+                        SNP_ID = NULL,
+                        trait = "binary",
+                        in_sample_LD = F,
                         a = 0.005,
-                        b = 2e5,
                         coverage = 0.95,
                         purity = 0.5)
 ```

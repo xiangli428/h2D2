@@ -6,46 +6,41 @@
 #' 
 #' @usage 
 #' For quantitative traits,
-#' h2D2 = Createh2D2Object(betaHat,
-#'                         sigmaHat,
+#' h2D2 = Createh2D2Object(z,
 #'                         R,
+#'                         N,
 #'                         SNP_ID = NULL,
 #'                         trait = "quantitative",
-#'                         N,
+#'                         in_sample_LD = F,
 #'                         a = 0.005,
-#'                         b = 2e5,
 #'                         coverage = 0.95,
 #'                         purity = 0.5)
 #' 
 #' For binary traits,
-#' h2D2 = Createh2D2Object(betaHat,
-#'                         sigmaHat,
+#' h2D2 = Createh2D2Object(z,
 #'                         R,
-#'                         SNP_ID = NULL,
-#'                         trait = "binary",
 #'                         N1,
 #'                         N0,
+#'                         SNP_ID = NULL,
+#'                         trait = "binary",
+#'                         in_sample_LD = F,
 #'                         a = 0.005,
-#'                         b = 2e5,
 #'                         coverage = 0.95,
 #'                         purity = 0.5)
 #'
-#' @param betaHat M-vector of standardized effect sizes. Per-allele effect sizes
-#' should be multiplied by sqrt(2\*MAF\*(1-MAF)) before input.
-#' @param sigmaHat M-vector of standard errors of standardized effect sizes.
-#' Standard errors of per-allele effect sizes should be multiplied by 
-#' sqrt(2\*MAF\*(1-MAF)) before input.
+#' @param z M-vector of z-scores.
+#' @param N The sample size. Required for quantitative traits.
+#' @param N1 Number of cases. Required for binary traits.
+#' @param N0 Number of controls. Required for binary traits.
 #' @param R An M-by-M LD matrix that can be coerced to 
 #' \code{\link[Matrix]{dsCMatrix-class}}.
 #' The diagonal elements should be set as 0s.
 #' @param SNP_ID Identifiers of SNPs. The default is c("SNP_1", ...).
 #' @param trait One of "quantitative" or "binary".
-#' @param N The sample size. Required for quantitative traits.
-#' @param N1 Number of cases. Required for binary traits.
-#' @param N0 Number of controls. Required for binary traits.
+#' @param in_sample_LD Whether the LD matrix is in-sample.
 #' @param a Shape parameters for sigma^2. Either a positive real number or an
 #' M-vector of positive real numbers.
-#' @param b Shape parameters for 1-h^2. A positive real number.
+#' @param b Shape parameter for 1-h^2. A positive real number.
 #' @param coverage A number between 0 and 1 specifying the "coverage"
 #' of the credible sets.
 #' @param purity A number between 0 and 1 specifying the minimum 
@@ -55,36 +50,28 @@
 #' 
 #' @export
 
-Createh2D2Object <- function(betaHat,
-                             sigmaHat,
+Createh2D2Object <- function(z,
                              R,
-                             SNP_ID = NULL,
-                             trait = "quantitative",
                              N = NULL,
                              N1 = NULL,
                              N0 = NULL,
+                             SNP_ID = NULL,
+                             trait = "quantitative",
+                             in_sample_LD = F,
                              a = 0.005,
-                             b = 2e5,
+                             b = NULL,
                              coverage = 0.95,
                              purity = 0.5)
 {
-  # Check betaHat and sigmaHat.
-  M = length(betaHat)
+  # Check z.
+  M = length(z)
   if(M <= 1)
   {
     stop("Should contain at least 2 SNPs.")
   }
-  if(length(sigmaHat) != M)
+  if(any(is.na(z)))
   {
-    stop("The length of standard errors is not equal to the length of effect sizes.")
-  }
-  if(any(is.na(betaHat)) | any(is.na(sigmaHat)))
-  {
-    stop("betaHat and sigmaHat cannot contain missing values.")
-  }
-  if(any(sigmaHat <= 0))
-  {
-    stop("sigmaHat should be positive.")
+    stop("z cannot contain missing values.")
   }
   
   # Check R.
@@ -107,9 +94,29 @@ Createh2D2Object <- function(betaHat,
     warning("The diagonal elements of LD matrix are coerced to zeros.")
   }
   R_eig = eigen(R, symmetric = T)
-  if(R_eig$values[M] <= -1)
+  if(R_eig$values[M] < -1)
   {
-    warning("LD matrix is nearly singular.")
+    warning("LD matrix is not positive semidefinite.")
+  }
+  
+  # Check trait.
+  if(trait == "quantitative")
+  {
+    if(is.null(N))
+    {
+      stop("N is required for quantitative traits.")
+    }
+    betaHat = z / sqrt(N + z^2)
+  } else if(trait == "binary")
+  {
+    if(is.null(N1) | is.null(N0))
+    {
+      stop("N1 and N0 are required for binary traits.")
+    }
+    N = N1 + N0
+    betaHat = z * sqrt(N/N1/N0)
+  } else {
+    stop("'trait' must be either 'quantitative' or 'binary'.")
   }
   
   # Check SNP ID.
@@ -123,6 +130,7 @@ Createh2D2Object <- function(betaHat,
     SNP_ID = paste("SNP", 1:M, sep = "_")
   }
   
+  # Hyper-parameters
   if(length(a) == 1)
   {
     a = rep(a, M)
@@ -131,26 +139,50 @@ Createh2D2Object <- function(betaHat,
   {
     stop("The length of 'a' is not equal to the length of effect sizes.")
   }
-  
-  if(any(a <= 0) | b <= 0)
+  if(any(a <= 0))
   {
-    stop("Shape parameter should be positive.")
+    stop("Shape parameters a should be positive.")
   }
   
-  if(b <= 1)
+  if(is.null(b))
   {
-    warning("Setting b<=1 may lead to divergent result.")
-  }
-  
-  # Check trait.
-  if(trait == "quantitative")
-  {
-    S = sqrt(sigmaHat^2 + betaHat^2 / N)
-  } else if(trait == "binary")
-  {
-    S = sigmaHat
+    if(in_sample_LD)
+    {
+      # compute HESS estimater
+      order_SNP = order(abs(z), decreasing = T)
+      keep_SNPs = order_SNP[1]
+      for(j in order_SNP[2:M])
+      {
+        if(all(abs(R[j,keep_SNPs]) < 0.5))
+        {
+          keep_SNPs = c(keep_SNPs, j)
+        }
+      }
+      keep_SNPs = sort(keep_SNPs)
+      p = length(keep_SNPs)
+      bVb = crossprod(solve(R[keep_SNPs,keep_SNPs] + diag(p),
+                            betaHat[keep_SNPs], system = "LDLt"),
+                      betaHat[keep_SNPs])[1]
+      if(trait == "quantitative")
+      {
+        h2_hess = (N * bVb - p) / (N - p)
+      } else {
+        h2_hess = N1 * N0 / N^2 * bVb - p / N
+      }
+      b = sum(a) * (1 - h2_hess) / h2_hess
+      
+      if(b <= 1)
+      {
+        warning("Setting b as default value 1e5.")
+      }
+    } else {
+      b = 1e5
+    }
   } else {
-    stop("'trait' must be either 'quantitative' or 'binary'.")
+    if(b < 1)
+    {
+      warning("Setting b<=1 may lead to divergent result.")
+    }
   }
   
   R = as(R, "dsCMatrix")
@@ -176,9 +208,8 @@ Createh2D2Object <- function(betaHat,
              N1 = N1,
              N0 = N0,
              SNP_ID = SNP_ID,
+             z = z,
              betaHat = betaHat,
-             S = S,
-             z = betaHat / sigmaHat,
              R = R,
              trait = trait,
              LD_pairs = LD_pairs,

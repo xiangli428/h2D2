@@ -10,9 +10,8 @@
 #' @slot N1 Number of cases for binary traits.
 #' @slot N0 Number of controls for binary traits.
 #' @slot SNP_ID IDs of SNPs. A character vector of size M.
-#' @slot betaHat An M-vector of marginal effect size estimates.
-#' @slot S An M-vector of standard errors of marginal effect size estimates.
 #' @slot z An M-vector of z-scores.
+#' @slot betaHat An M-vector of marginal effect size estimates.
 #' @slot R An M-by-M correlation matrix in \code{\link[Matrix]{dsCMatrix-class}} 
 #' format. The diagonal elements are set as 0.
 #' @slot trait A character string. One of "quantitative" or "binary".
@@ -42,9 +41,8 @@ setClass("h2D2",
            N1 = "ANY", #Number of individuals, case
            N0 = "ANY", #Number of individuals, control
            SNP_ID = "character",
+           z = "numeric", #z-scores
            betaHat = "numeric", #Marginal effect size estimates
-           S = "numeric",
-           z = "numeric",
            R = "dsCMatrix", #Genotype correlation, symmetric sparse, triu
            trait = "character",
            LD_pairs = "dgCMatrix",

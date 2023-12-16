@@ -55,19 +55,20 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
   if(h2D2@trait == "quantitative")
   {
     scale2 = 1
+    S_2 = h2D2@N
   } else if(h2D2@trait == "binary") {
-    scale2 = h2D2@N1 * h2D2@N0 / (h2D2@N1 + h2D2@N0)^2
+    scale2 = h2D2@N1 * h2D2@N0 / h2D2@N^2
+    S_2 = (h2D2@N1 * h2D2@N0) / h2D2@N
   }
   
   W = as(h2D2@R, "dsTMatrix")
-  W@x = W@x / (h2D2@S[W@i + 1] * h2D2@S[W@j + 1])
+  W@x = W@x * S_2
   W = as(W, "dsCMatrix")
   W = as(W, "dgCMatrix")
   
-  S_2 = h2D2@S^(-2)
   S_2betaHat = h2D2@betaHat * S_2
   
-  h2D2_sampling(h2D2, list(W, S_2, S_2betaHat), 
+  h2D2_sampling(h2D2, list(W, rep(S_2, h2D2@M), S_2betaHat), 
                 mcmc_n, thin, stepsize, scale2, seed)
   
   #burn in
