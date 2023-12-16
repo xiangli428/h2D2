@@ -364,26 +364,24 @@ library(h2D2)</code></pre>
 <div id="create-an-h2d2-object-with-summary-data" class="section level3">
 <h3>2. Create an h2D2 object with summary data</h3>
 <p>For quantitative traits,</p>
-<pre><code>h2D2 = Createh2D2Object(betaHat,
-                        sigmaHat,
+<pre><code>h2D2 = Createh2D2Object(z,
                         R,
+                        N,
                         SNP_ID = NULL,
                         trait = &quot;quantitative&quot;,
-                        N,
+                        in_sample_LD = F,
                         a = 0.005,
-                        b = 2e5,
                         coverage = 0.95,
                         purity = 0.5)</code></pre>
 <p>For binary traits,</p>
-<pre><code>h2D2 = Createh2D2Object(betaHat,
-                        sigmaHat,
+<pre><code>h2D2 = Createh2D2Object(z,
                         R,
-                        SNP_ID = NULL,
-                        trait = &quot;binary&quot;,
                         N1,
                         N0,
+                        SNP_ID = NULL,
+                        trait = &quot;binary&quot;,
+                        in_sample_LD = F,
                         a = 0.005,
-                        b = 2e5,
                         coverage = 0.95,
                         purity = 0.5)</code></pre>
 <p>where <code>a</code> and <code>b</code> specify the hyperparameters of the prior.</p>
