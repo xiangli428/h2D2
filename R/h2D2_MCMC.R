@@ -61,9 +61,7 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
     S_2 = (h2D2@N1 * h2D2@N0) / h2D2@N
   }
   
-  W = as(h2D2@R, "dsTMatrix")
-  W@x = W@x * S_2
-  W = as(W, "dsCMatrix")
+  W = R * S_2
   W = as(W, "dgCMatrix")
   
   S_2betaHat = h2D2@betaHat * S_2

@@ -71,52 +71,7 @@ Createh2D2Object <- function(z,
   }
   if(any(is.na(z)))
   {
-    stop("z cannot contain missing values.")
-  }
-  
-  # Check R.
-  R = as.matrix(R)
-  if(nrow(R) != M | ncol(R) != M)
-  {
-    stop("Dimensions of LD matrix are not equal to the length of effect sizes.")
-  }
-  if(any(abs(R) > 1))
-  {
-    stop("There cannot be a value greater than 1 in the LD matrix.")
-  }
-  if(!isSymmetric(R))
-  {
-    stop("LD matrix must be symmetric.")
-  }
-  if(any(diag(R) != 0))
-  {
-    diag(R) = 0
-    warning("The diagonal elements of LD matrix are coerced to zeros.")
-  }
-  R_eig = eigen(R, symmetric = T)
-  if(R_eig$values[M] < -1)
-  {
-    warning("LD matrix is not positive semidefinite.")
-  }
-  
-  # Check trait.
-  if(trait == "quantitative")
-  {
-    if(is.null(N))
-    {
-      stop("N is required for quantitative traits.")
-    }
-    betaHat = z / sqrt(N + z^2)
-  } else if(trait == "binary")
-  {
-    if(is.null(N1) | is.null(N0))
-    {
-      stop("N1 and N0 are required for binary traits.")
-    }
-    N = N1 + N0
-    betaHat = z * sqrt(N/N1/N0)
-  } else {
-    stop("'trait' must be either 'quantitative' or 'binary'.")
+    stop("'z' cannot contain missing values.")
   }
   
   # Check SNP ID.
@@ -126,8 +81,61 @@ Createh2D2Object <- function(z,
   }
   if(length(SNP_ID) != M)
   {
-    warning("The length of SNP_ID is not equal to the length of effect sizes. Rename SNPs.")
+    warning("The length of 'SNP_ID' is not equal to the length of 'z'.")
+    warning("Rename SNPs.")
     SNP_ID = paste("SNP", 1:M, sep = "_")
+  }
+  
+  # Check R.
+  R = as.matrix(R)
+  if(nrow(R) != M | ncol(R) != M)
+  {
+    stop("Dimensions of LD matrix are not equal to the length of effect sizes.")
+  }
+  
+  rownames(R) = colnames(R) = SNP_ID
+  
+  if(any(abs(R) > 1))
+  {
+    warning("There cannot be a value greater than 1 in the LD matrix.")
+    warning("Values larger than 1 or smaller than -1 are coerced to be 1 or -1.")
+    R[R > 1] = 1
+    R[R < -1] = -1
+  }
+  if(!isSymmetric(R, check.attributes = F))
+  {
+    warning("LD matrix must be symmetric. Coerce to be symmetric.")
+    R = (R + t(R)) / 2
+  }
+  if(any(diag(R) != 0))
+  {
+    diag(R) = 0
+    warning("The diagonal elements of LD matrix are coerced to zeros.")
+  }
+  R_eig = eigen(R, symmetric = T)
+  if(R_eig$values[M] < -1)
+  {
+    warning("LD matrix 'R' is not positive semidefinite.")
+  }
+  
+  # Check trait.
+  if(trait == "quantitative")
+  {
+    if(is.null(N))
+    {
+      stop("'N' is required for quantitative traits.")
+    }
+    betaHat = z / sqrt(N + z^2)
+  } else if(trait == "binary")
+  {
+    if(is.null(N1) | is.null(N0))
+    {
+      stop("'N1' and 'N0' are required for binary traits.")
+    }
+    N = N1 + N0
+    betaHat = z * sqrt(N/N1/N0)
+  } else {
+    stop("'trait' must be either 'quantitative' or 'binary'.")
   }
   
   # Hyper-parameters
@@ -141,7 +149,7 @@ Createh2D2Object <- function(z,
   }
   if(any(a <= 0))
   {
-    stop("Shape parameters a should be positive.")
+    stop("Shape parameters 'a' should be positive.")
   }
   
   if(is.null(b))
@@ -185,8 +193,6 @@ Createh2D2Object <- function(z,
     }
   }
   
-  R = as(R, "dsCMatrix")
-  
   # Check coverage, purity, and rho
   if(coverage < 0 | coverage > 1)
   {
@@ -197,10 +203,12 @@ Createh2D2Object <- function(z,
     stop("Purity must be in a range between 0 and 1.")
   }
   
-  LD_pairs = as.matrix(R^2)
+  LD_pairs = R^2
   LD_pairs[LD_pairs < purity^2] = 0
   LD_pairs = t(LD_pairs / (rowSums(LD_pairs) + 5e-324))
   LD_pairs = as(LD_pairs, "dgCMatrix")
+  
+  R = as(R, "dsCMatrix")
   
   return(new("h2D2",
              M = M,
