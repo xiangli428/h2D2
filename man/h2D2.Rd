@@ -20,7 +20,7 @@ This method can also provide "credible sets" of candidate causal variants,
 which are generally provided by fine-mapping methods based on discrete-mixture priors.
 }
 \references{
-https://www.medrxiv.org/content/10.1101/2023.08.04.23293456v1
+https://doi.org/10.1016/j.ajhg.2023.12.007
 }
 \seealso{
 Useful links:

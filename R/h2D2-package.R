@@ -7,6 +7,7 @@
 #' @import Matrix
 #' @import foreach
 #' @import dplyr
+#' @import RSpectra
 #' 
 #' @details 
 #' This package implements a fine-mapping method based on the 
@@ -21,7 +22,7 @@
 #' 
 #' @keywords internal
 #' 
-#' @references https://www.medrxiv.org/content/10.1101/2023.08.04.23293456v1
+#' @references https://doi.org/10.1016/j.ajhg.2023.12.007
 
 "_PACKAGE"
 

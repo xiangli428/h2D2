@@ -61,7 +61,7 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
     S_2 = (h2D2@N1 * h2D2@N0) / h2D2@N
   }
   
-  W = R * S_2
+  W = h2D2@R * S_2
   W = as(W, "dgCMatrix")
   
   S_2betaHat = h2D2@betaHat * S_2
@@ -115,7 +115,25 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
   
   h2D2@CL = apply(h2D2@mcmc_samples$beta, 2, function(x){
     abs(sum(x > 0) - sum(x < 0)) / length(x)})
-  h2D2@CS = credible_sets(h2D2, h2D2@coverage, h2D2@purity)
+  h2D2@CS = h2D2_CS(h2D2, h2D2@coverage, h2D2@purity)
+  
+  # Convergence
+  n = h2D2@mcmc_samples$n_samples
+  n_2 = floor(n/2)
+  h2D2@mcmc_samples$PSRF_beta = foreach(j = 1:h2D2@M, .combine = "c") %do%
+  {
+    s1 = h2D2@mcmc_samples$beta[1:n_2,j]
+    s2 = h2D2@mcmc_samples$beta[(n-n_2+1):n,j]
+    B = n_2 * (mean(s1) - mean(s2))^2 / 2
+    W = (var(s1) + var(s2))/2
+    sqrt(1 - 1/n_2 + B/(W+5e-324) / n_2)
+  }
+  if(any(h2D2@mcmc_samples$PSRF_beta > 1.1))
+  {
+    warning(sprintf("The MCMC chain may not converge well for beta %s.",
+                    paste(which(h2D2@mcmc_samples$PSRF_beta > 1.1), 
+                          collapse = ',')))
+  }
   
   return(h2D2)
 }

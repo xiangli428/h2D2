@@ -12,7 +12,7 @@ Authors@R:
 Description: This package implements a fine-mapping method based on the 
     "heritability-induced Dirichlet Decomposition" (h2-D2) prior,
     as described in 
-    https://www.medrxiv.org/content/10.1101/2023.08.04.23293456v1.
+    https://doi.org/10.1016/j.ajhg.2023.12.007.
     It is a novel fine-mapping method that utilizes a continuous global-local 
     shrinkage prior.
     This method can be applied to both quantitative and binary traits.
@@ -23,6 +23,6 @@ Description: This package implements a fine-mapping method based on the
     based on discrete-mixture priors.
 URL: https://github.com/xiangli428/h2D2
 License: GPL(>=2)
-Imports: Rcpp (>= 1.0.9), RcppEigen, Matrix, foreach, dplyr
+Imports: Rcpp (>= 1.0.9), RcppEigen, Matrix, foreach, dplyr, RSpectra
 LinkingTo: Rcpp, RcppEigen
 RoxygenNote: 7.1.1
