@@ -51,7 +51,7 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   CL = arrange(CL, -CL, index)
   
   CS = list("sets" = list(), "CL" = c())
-  n1 = sum(CL$CL > coverage)
+  n1 = sum(CL$CL >= coverage)
   if(n1 > 0)
   {
     for(r in 1:n1)
@@ -142,19 +142,19 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   }
   
   CS$purity = foreach(set = CS$sets, .combine = "rbind") %do%
+  {
+    if(length(set) > 1)
     {
-      if(length(set) > 1)
-      {
-        R_sub = abs(h2D2@R[set, set]@x)
-        data.frame("min.abs.corr" = min(R_sub),
-                   "mean.abs.corr" = mean(R_sub),
-                   "median.abs.corr" = median(R_sub))
-      } else {
-        data.frame("min.abs.corr" = 1,
-                   "mean.abs.corr" = 1,
-                   "median.abs.corr" = 1)
-      }
+      R_sub = abs(h2D2@R[set, set]@x)
+      data.frame("min.abs.corr" = min(R_sub),
+                 "mean.abs.corr" = mean(R_sub),
+                 "median.abs.corr" = median(R_sub))
+    } else {
+      data.frame("min.abs.corr" = 1,
+                 "mean.abs.corr" = 1,
+                 "median.abs.corr" = 1)
     }
+  }
   
   return(CS)
 }
