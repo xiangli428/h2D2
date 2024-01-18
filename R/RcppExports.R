@@ -9,7 +9,7 @@ propose_lognormal <- function(x, stepsize = 2) {
     .Call('_h2D2_propose_lognormal', PACKAGE = 'h2D2', x, stepsize)
 }
 
-h2D2_sampling <- function(h2D2, L, mcmc_n = 100L, thin = 1L, stepsize = 2, scale2 = 1, seed = 428L) {
-    invisible(.Call('_h2D2_h2D2_sampling', PACKAGE = 'h2D2', h2D2, L, mcmc_n, thin, stepsize, scale2, seed))
+h2D2_sampling <- function(h2D2, W, N, NbetaHat, mcmc_n = 100L, thin = 1L, stepsize = 2, seed = 428L) {
+    invisible(.Call('_h2D2_h2D2_sampling', PACKAGE = 'h2D2', h2D2, W, N, NbetaHat, mcmc_n, thin, stepsize, seed))
 }
 

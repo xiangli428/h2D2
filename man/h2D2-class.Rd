@@ -14,20 +14,15 @@ credible sets. Objects can be created by Createh2D2Object.
 \describe{
 \item{\code{M}}{Number of SNPs.}
 
-\item{\code{N}}{Number of individuals for quantitative traits.}
-
-\item{\code{N1}}{Number of cases for binary traits.}
-
-\item{\code{N0}}{Number of controls for binary traits.}
-
-\item{\code{SNP_ID}}{IDs of SNPs. A character vector of size M.}
+\item{\code{N}}{GWAS sample size. For binary traits, 'N' is the sum of the
+number of cases and the number of controls.}
 
 \item{\code{z}}{An M-vector of z-scores.}
 
-\item{\code{betaHat}}{An M-vector of marginal effect size estimates.}
-
 \item{\code{R}}{An M-by-M correlation matrix in \code{\link[Matrix]{dsCMatrix-class}} 
 format. The diagonal elements are set as 0.}
+
+\item{\code{SNP_ID}}{IDs of SNPs. A character vector of size M.}
 
 \item{\code{trait}}{A character string. One of "quantitative" or "binary".}
 

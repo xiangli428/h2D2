@@ -4,24 +4,11 @@
 \alias{Createh2D2Object}
 \title{Create an h2D2 object.}
 \usage{
-For quantitative traits,
 h2D2 = Createh2D2Object(z,
                         R,
                         N,
                         SNP_ID = NULL,
-                        trait = "quantitative",
-                        in_sample_LD = F,
-                        a = 0.005,
-                        coverage = 0.95,
-                        purity = 0.5)
-
-For binary traits,
-h2D2 = Createh2D2Object(z,
-                        R,
-                        N1,
-                        N0,
-                        SNP_ID = NULL,
-                        trait = "binary",
+                        trait = c("quantitative","binary"),
                         in_sample_LD = F,
                         a = 0.005,
                         coverage = 0.95,
@@ -32,17 +19,14 @@ h2D2 = Createh2D2Object(z,
 
 \item{R}{An M-by-M LD matrix that can be coerced to 
 \code{\link[Matrix]{dsCMatrix-class}}.
-The diagonal elements should be set as 0s.}
+The diagonal elements will be coerced to zeros.}
 
-\item{N}{The sample size. Required for quantitative traits.}
-
-\item{N1}{Number of cases. Required for binary traits.}
-
-\item{N0}{Number of controls. Required for binary traits.}
+\item{N}{GWAS sample size. For binary traits, 'N' is the sum of the
+number of cases and the number of controls.}
 
 \item{SNP_ID}{Identifiers of SNPs. The default is c("SNP_1", ...).}
 
-\item{trait}{One of "quantitative" or "binary".}
+\item{trait}{Either "quantitative" or "binary".}
 
 \item{in_sample_LD}{Whether the LD matrix is in-sample.}
 
@@ -59,8 +43,10 @@ absolute correlation allowed in a credible set.}
 }
 \value{
 An h2D2 object. See \code{\link{h2D2-class}}.
+For quantitative traits, the input z-scores will be modified to
+z / sqrt(1 + z^2/N - 1/N).
 }
 \description{
 Create an h2D2 object from GWAS summary statistics and an LD matrix estimate.
-GWAS summary data, h2-D2 hyper-parameters, and useful variables are stored.
+GWAS z-scores, h2-D2 hyper-parameters, and useful variables are stored.
 }

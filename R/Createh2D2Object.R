@@ -2,41 +2,27 @@
 #' 
 #' @description 
 #' Create an h2D2 object from GWAS summary statistics and an LD matrix estimate.
-#' GWAS summary data, h2-D2 hyper-parameters, and useful variables are stored.
+#' GWAS z-scores, h2-D2 hyper-parameters, and useful variables are stored.
 #' 
 #' @usage 
-#' For quantitative traits,
 #' h2D2 = Createh2D2Object(z,
 #'                         R,
 #'                         N,
 #'                         SNP_ID = NULL,
-#'                         trait = "quantitative",
-#'                         in_sample_LD = F,
-#'                         a = 0.005,
-#'                         coverage = 0.95,
-#'                         purity = 0.5)
-#' 
-#' For binary traits,
-#' h2D2 = Createh2D2Object(z,
-#'                         R,
-#'                         N1,
-#'                         N0,
-#'                         SNP_ID = NULL,
-#'                         trait = "binary",
+#'                         trait = c("quantitative","binary"),
 #'                         in_sample_LD = F,
 #'                         a = 0.005,
 #'                         coverage = 0.95,
 #'                         purity = 0.5)
 #'
 #' @param z M-vector of z-scores.
-#' @param N The sample size. Required for quantitative traits.
-#' @param N1 Number of cases. Required for binary traits.
-#' @param N0 Number of controls. Required for binary traits.
 #' @param R An M-by-M LD matrix that can be coerced to 
 #' \code{\link[Matrix]{dsCMatrix-class}}.
-#' The diagonal elements should be set as 0s.
+#' The diagonal elements will be coerced to zeros.
+#' @param N GWAS sample size. For binary traits, 'N' is the sum of the
+#' number of cases and the number of controls.
 #' @param SNP_ID Identifiers of SNPs. The default is c("SNP_1", ...).
-#' @param trait One of "quantitative" or "binary".
+#' @param trait Either "quantitative" or "binary".
 #' @param in_sample_LD Whether the LD matrix is in-sample.
 #' @param a Shape parameters for sigma^2. Either a positive real number or an
 #' M-vector of positive real numbers.
@@ -47,14 +33,14 @@
 #' absolute correlation allowed in a credible set.
 #' 
 #' @return An h2D2 object. See \code{\link{h2D2-class}}.
+#' For quantitative traits, the input z-scores will be modified to
+#' z / sqrt(1 + z^2/N - 1/N).
 #' 
 #' @export
 
 Createh2D2Object <- function(z,
                              R,
-                             N = NULL,
-                             N1 = NULL,
-                             N0 = NULL,
+                             N,
                              SNP_ID = NULL,
                              trait = "quantitative",
                              in_sample_LD = F,
@@ -88,6 +74,7 @@ Createh2D2Object <- function(z,
   
   # Check R.
   R = as.matrix(R)
+  
   if(nrow(R) != M | ncol(R) != M)
   {
     stop("Dimensions of LD matrix are not equal to the length of effect sizes.")
@@ -112,29 +99,29 @@ Createh2D2Object <- function(z,
     diag(R) = 0
     warning("The diagonal elements of LD matrix are coerced to zeros.")
   }
+  
   R_eig = eigen(R, symmetric = T)
+  
   if(R_eig$values[M] < -1)
   {
     warning("LD matrix 'R' is not positive semidefinite.")
   }
   
+  # Check N.
+  if(is.null(N))
+  {
+    stop("Sample size 'N' is required.")
+  }
+  if(length(N) >= 2)
+  {
+    stop("Sample size 'N' must be a number.")
+  }
+  
   # Check trait.
   if(trait == "quantitative")
   {
-    if(is.null(N))
-    {
-      stop("'N' is required for quantitative traits.")
-    }
-    betaHat = z / sqrt(N + z^2)
-  } else if(trait == "binary")
-  {
-    if(is.null(N1) | is.null(N0))
-    {
-      stop("'N1' and 'N0' are required for binary traits.")
-    }
-    N = N1 + N0
-    betaHat = z * sqrt(N/N1/N0)
-  } else {
+    z = z / sqrt(1 + z^2 / N - 1 / N)
+  } else if(trait != "binary") {
     stop("'trait' must be either 'quantitative' or 'binary'.")
   }
   
@@ -156,32 +143,14 @@ Createh2D2Object <- function(z,
   {
     if(in_sample_LD)
     {
-      # compute HESS estimater
-      order_SNP = order(abs(z), decreasing = T)
-      keep_SNPs = order_SNP[1]
-      for(j in order_SNP[2:M])
-      {
-        if(all(abs(R[j,keep_SNPs]) < 0.5))
-        {
-          keep_SNPs = c(keep_SNPs, j)
-        }
-      }
-      keep_SNPs = sort(keep_SNPs)
-      p = length(keep_SNPs)
-      bVb = crossprod(solve(R[keep_SNPs,keep_SNPs] + diag(p),
-                            betaHat[keep_SNPs], system = "LDLt"),
-                      betaHat[keep_SNPs])[1]
-      if(trait == "quantitative")
-      {
-        h2_hess = (N * bVb - p) / (N - p)
-      } else {
-        h2_hess = N1 * N0 / N^2 * bVb - p / N
-      }
-      b = sum(a) * (1 - h2_hess) / h2_hess
+      # Compute HDL estimate
+      h2_HDL = HDL(z, N, R_eig = R_eig)
+      
+      b = sum(a) * (1 - h2_HDL) / h2_HDL
       
       if(b <= 1)
       {
-        warning("Setting b as default value 1e5.")
+        warning("Setting 'b' as default value 1e5.")
       }
     } else {
       b = 1e5
@@ -213,11 +182,8 @@ Createh2D2Object <- function(z,
   return(new("h2D2",
              M = M,
              N = N,
-             N1 = N1,
-             N0 = N0,
              SNP_ID = SNP_ID,
              z = z,
-             betaHat = betaHat,
              R = R,
              trait = trait,
              LD_pairs = LD_pairs,

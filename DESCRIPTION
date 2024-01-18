@@ -3,7 +3,7 @@ Package: h2D2
 Type: Package
 Title: Heritability-induced Dirichlet Decomposition
 Version: 1.0
-Date: 2023-07-30
+Date: 2024-01-18
 Authors@R:
     c(person("Xiang", "Li", email = "freddyl@connect.hku.hk",
         role = c("aut","cre")),

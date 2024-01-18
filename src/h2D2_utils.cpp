@@ -37,11 +37,12 @@ double propose_lognormal(double x, double stepsize = 2)
 
 // [[Rcpp::export]]
 void h2D2_sampling(S4 h2D2, 
-                   List L,
+                   const Eigen::SparseMatrix<double> W,
+                   const double N,
+                   const Eigen::VectorXd NbetaHat,
                    int mcmc_n = 100, 
                    int thin = 1, 
                    double stepsize = 2, 
-                   double scale2 = 1, 
                    unsigned int seed = 428)
 {
   Function set_seed("set.seed");
@@ -50,36 +51,16 @@ void h2D2_sampling(S4 h2D2,
   // Data
   const int M = h2D2.slot("M");
   
-  // const VectorXd betaHat = h2D2.slot("betaHat");
-  // const VectorXd S = h2D2.slot("S");
-  // VectorXd S_2 = VectorXd::Zero(M);
-  // VectorXd S_2betaHat = VectorXd::Zero(M);
-  // int j;
-  // for(j = 0; j < M; ++j)
-  // {
-  //   S_2(j) = 1 / pow(S(j), 2);
-  //   S_2betaHat(j) = S_2(j) * betaHat(j);
-  // }
-  
-  // const VectorXd S_2 = h2D2.slot("S_2");
-  // const VectorXd S_2betaHat = h2D2.slot("S_2betaHat");
-  
-  const VectorXd S_2 = L[1];
-  const VectorXd S_2betaHat = L[2];
-  
   Environment methods = Environment::namespace_env("methods");
   Function AS = methods["as"];
   const SparseMatrix<double> R = as<SparseMatrix<double>>(
     AS(h2D2.slot("R"), _["Class"] = "dgCMatrix"));
-  const SparseMatrix<double> W = L[0];
-  // const SparseMatrix<double> W = as<SparseMatrix<double>>(
-  //   AS(h2D2.slot("W"), _["Class"] = "dgCMatrix"));
   const SparseMatrix<double> LD_pairs = h2D2.slot("LD_pairs");
   
   // Hyper parameters
   const VectorXd a = h2D2.slot("a");
   const double b = h2D2.slot("b");
-  const double scale = sqrt(scale2 / 2);
+  const double sqrt2 = sqrt(2);
   
   // Initial samples
   int i = 0;
@@ -182,17 +163,17 @@ void h2D2_sampling(S4 h2D2,
         
         sigma2_j_new = exp(log_sigma2_j_new);
         
-        tsigma2_j = 1 / (S_2(j) + scale2 / (sigma2_j * psi(j)));
-        tsigma2_j_new = 1 / (S_2(j) + scale2 / (sigma2_j_new * psi(j)));
+        tsigma2_j = 1 / (N + 1 / (sigma2_j * psi(j)));
+        tsigma2_j_new = 1 / (N + 1 / (sigma2_j_new * psi(j)));
         
-        u_j = S_2betaHat(j);
+        u_j = NbetaHat(j);
         for(SparseMatrix<double>::InnerIterator it(W,j); it; ++it)
         {
           u_j -= it.value() * beta(it.row());
         }
         
-        acc_prob *= sqrt((S_2(j) * sigma2_j * psi(j) + scale2) /
-          (S_2(j) * sigma2_j_new * psi(j) + scale2)) *
+        acc_prob *= sqrt((N * sigma2_j * psi(j) + 1) /
+          (N * sigma2_j_new * psi(j) + 1)) *
             exp(pow(u_j, 2) * (tsigma2_j_new - tsigma2_j) / 2) *
             exp(a(j) * (log_sigma2_j_new - log_sigma2(j))) *
             pow((res - sigma2_j_new) / (res - sigma2_j), b - 1);
@@ -212,7 +193,7 @@ void h2D2_sampling(S4 h2D2,
         {
           psi(j) = 1;
         } else {
-          nu_j = exp(log_sigma2(j)/2) / (abs(beta(j)) * scale);
+          nu_j = sqrt2 * exp(log_sigma2(j)/2) / abs(beta(j));
           psi(j) = 1 / rinvGauss(nu_j, 2);
         }
       }
@@ -279,13 +260,13 @@ void h2D2_sampling(S4 h2D2,
               
               if(res - sigma2_1_new - sigma2_2_new > 0)
               {
-                u_1 = S_2betaHat(j1) + W_12 * beta(j2);
+                u_1 = NbetaHat(j1) + W_12 * beta(j2);
                 for(SparseMatrix<double>::InnerIterator it(W,j1); it; ++it)
                 {
                   u_1 -= it.value() * beta(it.row());
                 }
                 
-                u_2 = S_2betaHat(j2) + W_12 * beta(j1);
+                u_2 = NbetaHat(j2) + W_12 * beta(j1);
                 for(SparseMatrix<double>::InnerIterator it(W,j2); it; ++it)
                 {
                   u_2 -= it.value() * beta(it.row());
@@ -294,13 +275,13 @@ void h2D2_sampling(S4 h2D2,
                 psi_1_new = R::rexp(1);
                 psi_2_new = R::rexp(1);
                 
-                beta_1_new = R::rnorm(0, sqrt(psi_1_new * sigma2_1_new / scale2));
-                beta_2_new = R::rnorm(0, sqrt(psi_2_new * sigma2_2_new / scale2));
+                beta_1_new = R::rnorm(0, sqrt(psi_1_new * sigma2_1_new));
+                beta_2_new = R::rnorm(0, sqrt(psi_2_new * sigma2_2_new));
                 
                 acc_prob = u_1 * (beta_1_new - beta(j1)) + 
                   u_2 * (beta_2_new - beta(j2)) +
-                  S_2(j1) * (pow(beta(j1),2) - pow(beta_1_new,2)) / 2 +
-                  S_2(j2) * (pow(beta(j2),2) - pow(beta_2_new,2)) / 2 +
+                  N * (pow(beta(j1),2) - pow(beta_1_new,2)) / 2 +
+                  N * (pow(beta(j2),2) - pow(beta_2_new,2)) / 2 +
                   W_12 * (beta(j1) * beta(j2) - beta_1_new * beta_2_new) +
                   a(j1) * (log_sigma2_1_new - log_sigma2(j1)) +
                   a(j2) * (log_sigma2_2_new - log_sigma2(j2)) +
@@ -371,8 +352,7 @@ void h2D2_sampling(S4 h2D2,
               rss += W_12 * (beta(j1) - beta(j2));
               rss *= (beta(j1) - beta(j2));
               
-              rss += (S_2betaHat(j1) - S_2betaHat(j2)) * (beta(j2) - beta(j1)) +
-                (S_2(j1) - S_2(j2)) * (pow(beta(j1),2) - pow(beta(j2),2)) / 2;
+              rss += (NbetaHat(j1) - NbetaHat(j2)) * (beta(j2) - beta(j1));
             } else {
               for(SparseMatrix<double>::InnerIterator it(W,j1); it; ++it)
               {
@@ -385,8 +365,7 @@ void h2D2_sampling(S4 h2D2,
               rss -= W_12 * (beta(j1) + beta(j2));
               rss *= (beta(j1) + beta(j2));
               
-              rss += -(S_2betaHat(j1) + S_2betaHat(j2)) * (beta(j1) + beta(j2)) +
-                (S_2(j1) - S_2(j2)) * (pow(beta(j1),2) - pow(beta(j2),2)) / 2;
+              rss += -(NbetaHat(j1) + NbetaHat(j2)) * (beta(j1) + beta(j2));
             }
             
             acc_prob = exp(rss) *

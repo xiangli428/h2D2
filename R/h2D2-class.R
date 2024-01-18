@@ -6,14 +6,12 @@
 #' credible sets. Objects can be created by Createh2D2Object.
 #' 
 #' @slot M Number of SNPs.
-#' @slot N Number of individuals for quantitative traits.
-#' @slot N1 Number of cases for binary traits.
-#' @slot N0 Number of controls for binary traits.
-#' @slot SNP_ID IDs of SNPs. A character vector of size M.
+#' @slot N GWAS sample size. For binary traits, 'N' is the sum of the
+#' number of cases and the number of controls.
 #' @slot z An M-vector of z-scores.
-#' @slot betaHat An M-vector of marginal effect size estimates.
 #' @slot R An M-by-M correlation matrix in \code{\link[Matrix]{dsCMatrix-class}} 
 #' format. The diagonal elements are set as 0.
+#' @slot SNP_ID IDs of SNPs. A character vector of size M.
 #' @slot trait A character string. One of "quantitative" or "binary".
 #' @slot LD_pairs A \code{\link[Matrix]{dgCMatrix-class}} object stored SNP 
 #' pairs with |r|>=purity and transition probabilities used in MCMC algorithm to 
@@ -37,13 +35,10 @@
 setClass("h2D2", 
          slots = c(
            M = "numeric", #Number of SNPs
-           N = "ANY", #Number of individuals, quantitative
-           N1 = "ANY", #Number of individuals, case
-           N0 = "ANY", #Number of individuals, control
-           SNP_ID = "character",
+           N = "numeric", #Number of individuals
            z = "numeric", #z-scores
-           betaHat = "numeric", #Marginal effect size estimates
            R = "dsCMatrix", #Genotype correlation, symmetric sparse, triu
+           SNP_ID = "character",
            trait = "character",
            LD_pairs = "dgCMatrix",
            a = "numeric", #Shape parameter for sigma2

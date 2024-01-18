@@ -52,22 +52,13 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
   }
   seed = round(seed)
   
-  if(h2D2@trait == "quantitative")
-  {
-    scale2 = 1
-    S_2 = h2D2@N
-  } else if(h2D2@trait == "binary") {
-    scale2 = h2D2@N1 * h2D2@N0 / h2D2@N^2
-    S_2 = (h2D2@N1 * h2D2@N0) / h2D2@N
-  }
-  
-  W = h2D2@R * S_2
+  N = h2D2@N
+  W = h2D2@R * N
   W = as(W, "dgCMatrix")
   
-  S_2betaHat = h2D2@betaHat * S_2
+  NbetaHat = h2D2@z * sqrt(N)
   
-  h2D2_sampling(h2D2, list(W, rep(S_2, h2D2@M), S_2betaHat), 
-                mcmc_n, thin, stepsize, scale2, seed)
+  h2D2_sampling(h2D2, W, N, NbetaHat, mcmc_n, thin, stepsize, seed)
   
   #burn in
   h2D2@mcmc_samples[["n_burnin"]] = h2D2@mcmc_samples[["n_burnin"]] + burn_in
@@ -87,10 +78,8 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
   }
   h2D2@mcmc_samples$n_samples = nrow(h2D2@mcmc_samples$beta)
   
-  h2D2@mcmc_samples$h2_beta = h2D2@mcmc_samples$h2_beta * scale2
-  
   #summary statistics
-  sigma2 = exp(h2D2@mcmc_samples$log_sigma2) / scale2
+  sigma2 = exp(h2D2@mcmc_samples$log_sigma2)
   h2D2@mcmc_mean$sigma2 = colMeans(sigma2)
   h2D2@mcmc_sd$sigma2 = apply(sigma2, 2, sd)
   h2D2@mcmc_quantile$sigma2 = apply(sigma2, 2, quantile, 

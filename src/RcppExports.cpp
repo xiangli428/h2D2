@@ -36,18 +36,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // h2D2_sampling
-void h2D2_sampling(S4 h2D2, List L, int mcmc_n, int thin, double stepsize, double scale2, unsigned int seed);
-RcppExport SEXP _h2D2_h2D2_sampling(SEXP h2D2SEXP, SEXP LSEXP, SEXP mcmc_nSEXP, SEXP thinSEXP, SEXP stepsizeSEXP, SEXP scale2SEXP, SEXP seedSEXP) {
+void h2D2_sampling(S4 h2D2, const Eigen::SparseMatrix<double> W, const double N, const Eigen::VectorXd NbetaHat, int mcmc_n, int thin, double stepsize, unsigned int seed);
+RcppExport SEXP _h2D2_h2D2_sampling(SEXP h2D2SEXP, SEXP WSEXP, SEXP NSEXP, SEXP NbetaHatSEXP, SEXP mcmc_nSEXP, SEXP thinSEXP, SEXP stepsizeSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type h2D2(h2D2SEXP);
-    Rcpp::traits::input_parameter< List >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const Eigen::SparseMatrix<double> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< const double >::type N(NSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd >::type NbetaHat(NbetaHatSEXP);
     Rcpp::traits::input_parameter< int >::type mcmc_n(mcmc_nSEXP);
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
     Rcpp::traits::input_parameter< double >::type stepsize(stepsizeSEXP);
-    Rcpp::traits::input_parameter< double >::type scale2(scale2SEXP);
     Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
-    h2D2_sampling(h2D2, L, mcmc_n, thin, stepsize, scale2, seed);
+    h2D2_sampling(h2D2, W, N, NbetaHat, mcmc_n, thin, stepsize, seed);
     return R_NilValue;
 END_RCPP
 }
@@ -55,7 +56,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_h2D2_rinvGauss", (DL_FUNC) &_h2D2_rinvGauss, 2},
     {"_h2D2_propose_lognormal", (DL_FUNC) &_h2D2_propose_lognormal, 2},
-    {"_h2D2_h2D2_sampling", (DL_FUNC) &_h2D2_h2D2_sampling, 7},
+    {"_h2D2_h2D2_sampling", (DL_FUNC) &_h2D2_h2D2_sampling, 8},
     {NULL, NULL, 0}
 };
 
