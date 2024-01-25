@@ -363,7 +363,6 @@ library(h2D2)</code></pre>
 </div>
 <div id="create-an-h2d2-object-with-summary-data" class="section level3">
 <h3>2. Create an h2D2 object with summary data</h3>
-<p>For quantitative traits,</p>
 <pre><code>h2D2 = Createh2D2Object(z,
                         R,
                         N,
@@ -373,18 +372,7 @@ library(h2D2)</code></pre>
                         a = 0.005,
                         coverage = 0.95,
                         purity = 0.5)</code></pre>
-<p>For binary traits,</p>
-<pre><code>h2D2 = Createh2D2Object(z,
-                        R,
-                        N1,
-                        N0,
-                        SNP_ID = NULL,
-                        trait = &quot;binary&quot;,
-                        in_sample_LD = F,
-                        a = 0.005,
-                        coverage = 0.95,
-                        purity = 0.5)</code></pre>
-<p>where <code>a</code> and <code>b</code> specify the hyperparameters of the prior.</p>
+<p>where <code>a</code> and <code>b</code> specify the hyperparameters of the prior. If <code>in_sample_LD = T</code>, the local heritability will be estimated by high-definition likelihood method, and <code>b</code> will be set accordingly.</p>
 </div>
 <div id="mcmc-sampling" class="section level3">
 <h3>3. MCMC sampling</h3>
@@ -397,6 +385,10 @@ library(h2D2)</code></pre>
 <pre><code>h2D2@CL</code></pre>
 <p>95% Credible sets:</p>
 <pre><code>h2D2@CS</code></pre>
+</div>
+<div id="citation" class="section level3">
+<h3>5. Citation</h3>
+<p>Li, X., Sham, P. C., &amp; Zhang, Y. D. (2023). A Bayesian fine-mapping model using a continuous global-local shrinkage prior with applications in prostate cancer analysis. The American Journal of Human Genetics. <a href="https://doi.org/10.1016/j.ajhg.2023.12.007" class="uri">https://doi.org/10.1016/j.ajhg.2023.12.007</a></p>
 </div>
 </div>
 </div>

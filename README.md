@@ -20,7 +20,6 @@ library(h2D2)
 ```
 ### 2. Create an h2D2 object with summary data
 
-For quantitative traits,
 ```
 h2D2 = Createh2D2Object(z,
                         R,
@@ -32,20 +31,8 @@ h2D2 = Createh2D2Object(z,
                         coverage = 0.95,
                         purity = 0.5)
 ```
-For binary traits,
-```
-h2D2 = Createh2D2Object(z,
-                        R,
-                        N1,
-                        N0,
-                        SNP_ID = NULL,
-                        trait = "binary",
-                        in_sample_LD = F,
-                        a = 0.005,
-                        coverage = 0.95,
-                        purity = 0.5)
-```
 where `a` and `b` specify the hyperparameters of the prior.
+If `in_sample_LD = T`, the local heritability will be estimated by high-definition likelihood method, and `b` will be set accordingly.
 
 ### 3. MCMC sampling
 
@@ -64,3 +51,8 @@ h2D2@CL
 ```
 h2D2@CS
 ```
+
+### 5. Citation
+
+Li, X., Sham, P. C., & Zhang, Y. D. (2023). A Bayesian fine-mapping model using a continuous global-local shrinkage prior with applications in prostate cancer analysis. The American Journal of Human Genetics.
+https://doi.org/10.1016/j.ajhg.2023.12.007
