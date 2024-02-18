@@ -26,7 +26,7 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   {
     if(length(idx) >= 3)
     {
-      eig = eigs_sym(R[idx,idx], k = 1, )
+      eig = eigs_sym(R[idx,idx], k = 1)
       v = beta[,idx] %*% eig$vectors[,1]
     } else {
       v = beta[,idx[1]] + beta[,idx[2]] * sign(R[idx[1],idx[2]])
@@ -39,10 +39,10 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   R = as.matrix(h2D2@R)
   
   LD_pairs = foreach(j = 1:M) %do%
-    {
-      idx = which(abs(R[,j]) >= purity)
-      idx[order(abs(R[idx,j]), decreasing = T)]
-    }
+  {
+    idx = which(abs(R[,j]) >= purity)
+    idx[order(abs(R[idx,j]), decreasing = T)]
+  }
   diag(R) = 1
   
   CL = data.frame("index" = 1:M,
@@ -74,16 +74,16 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
     tests = intersect(LD_pairs[[j]], allSNPs)
     set = c(j)
     
-    if(length(tests) > 0 & tmp_CL < 0.95*coverage)
+    while(length(tests) > 0 & tmp_CL < coverage)
     {
-      while(tmp_CL < 0.95*coverage)
+      while(tmp_CL < coverage)
       {
         if(length(tests) > 0)
         {
           k = tests[which.max(CL$CL[tests])]
           tmp_CL = tmp_CL + CL$CL[k]
           tests = intersect(tests, LD_pairs[[k]])
-          set = c(set, k)
+          set %<>% append(k)
         } else {
           break
         }
@@ -91,48 +91,35 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
       tmp_CL = set_CL(h2D2@mcmc_samples$beta, R, set)
     }
     
-    if(tmp_CL < coverage)
+    if(tmp_CL >= coverage)
     {
-      while(length(tests) > 0)
+      set_ori = set = set[order(CL$CL[set])]
+      while(T)
       {
-        k = tests[1]
-        test_CL_max = set_CL(h2D2@mcmc_samples$beta, R, c(set, k))
-        
-        if(length(tests) > 1)
+        for(l in set_ori)
         {
-          for(l in tests[-1])
+          if(length(set) > 2)
           {
-            test_CL = set_CL(h2D2@mcmc_samples$beta, R, c(set, l))
-            
-            if(test_CL > test_CL_max)
+            k = which(set == l)
+            test_CL = set_CL(h2D2@mcmc_samples$beta, R, set[-k])
+            if(test_CL >= coverage)
             {
-              k = l
-              test_CL_max = test_CL
+              set = set[-k]
+              tmp_CL = test_CL
             }
+          } else {
+            break
           }
         }
         
-        if(test_CL_max > tmp_CL)
+        if(length(set_ori) == length(set) | length(set) == 2)
         {
-          set = c(set, k)
-          tmp_CL = test_CL_max
-          if(tmp_CL >= coverage)
-          {
-            CS$sets[[r]] = sort(set)
-            CS$CL[r] = tmp_CL
-            r = r + 1
-            candidate = setdiff(candidate, set)
-            allSNPs = setdiff(allSNPs, set)
-            # findCS = T
-            break
-          } else {
-            tests = intersect(tests, LD_pairs[[k]])
-          }
-        } else {
           break
+        } else {
+          set_ori = set
         }
       }
-    } else {
+      
       CS$sets[[r]] = sort(set)
       CS$CL[r] = tmp_CL
       r = r + 1
