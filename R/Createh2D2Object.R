@@ -145,12 +145,12 @@ Createh2D2Object <- function(z,
     {
       # Compute HDL estimate
       h2_HDL = HDL(z, N, R_eig = R_eig)
-      
       b = sum(a) * (1 - h2_HDL) / h2_HDL
       
       if(b <= 1)
       {
         warning("Setting 'b' as default value 1e5.")
+        b = 1e5
       }
     } else {
       b = 1e5

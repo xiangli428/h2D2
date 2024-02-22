@@ -47,12 +47,12 @@ HDL = function(z, N, R = NULL, R_eig = NULL, tol = 1e-8)
   
   P = length(idx)
   
-  fn = function(h2)
+  fn = function(logh2)
   {
-    denom = d + N * h2 * d2 / P
+    denom = d + N * exp(logh2) * d2 / P
     sum(log(denom)) + sum(u2 / denom)
   }
   
-  opt = optimize(fn, c(0,1))
-  opt$minimum
+  opt = optimize(fn, c(log(1e-5),0))
+  exp(opt$minimum)
 }
