@@ -7,6 +7,7 @@
 #' @import Matrix
 #' @import foreach
 #' @import dplyr
+#' @import magrittr
 #' @import RSpectra
 #' 
 #' @details 

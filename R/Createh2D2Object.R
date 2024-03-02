@@ -100,12 +100,12 @@ Createh2D2Object <- function(z,
     warning("The diagonal elements of LD matrix are coerced to zeros.")
   }
   
-  R_eig = eigen(R, symmetric = T)
-  
-  if(R_eig$values[M] < -1)
-  {
-    warning("LD matrix 'R' is not positive semidefinite.")
-  }
+  # R_eig = eigen(R, symmetric = T)
+  # 
+  # if(R_eig$values[M] < -1)
+  # {
+  #   warning("LD matrix 'R' is not positive semidefinite.")
+  # }
   
   # Check N.
   if(is.null(N))
@@ -144,7 +144,7 @@ Createh2D2Object <- function(z,
     if(in_sample_LD)
     {
       # Compute HDL estimate
-      h2_HDL = HDL(z, N, R_eig = R_eig)
+      h2_HDL = HDL(z, N, R = R)
       b = sum(a) * (1 - h2_HDL) / h2_HDL
       
       if(b <= 1)
