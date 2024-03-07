@@ -14,6 +14,14 @@
 #' indicating no thinning.
 #' @param stepsize Step size for proposal.
 #' @param seed Random seed for MCMC sampling.
+#' @param pre_mcmc_n If b = NULL, a pre-training process will be used to
+#' estimate b before MCMC. This parameter specifies the number of MCMC
+#' iterations of each training.
+#' @param pre_use The number of samples used to estimate b in each pre 
+#' training.
+#' @param pre_p p value threshold to determine whether the pre training can
+#' be stopped.
+#' @param pre_maxiter Maximum number of pre-training iterations.
 #' 
 #' @return An h2D2 object with MCMC samples. See \code{\link{h2D2-class}}.
 #' 
@@ -21,7 +29,9 @@
 #' @export
 
 h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
-                     stepsize = 2, seed = 428)
+                     stepsize = 2, seed = 428,
+                     pre_mcmc_n = 200, pre_use = 100,
+                     pre_p = 0.05, pre_maxiter = 10)
 {
   if(!is.numeric(mcmc_n) | mcmc_n < 0)
   {
@@ -58,7 +68,13 @@ h2D2_MCMC = function(h2D2, mcmc_n = 100, burn_in = 0, thin = 1,
   
   NbetaHat = h2D2@z * sqrt(N)
   
-  h2D2_sampling(h2D2, W, N, NbetaHat, mcmc_n, thin, stepsize, seed)
+  if(is.null(h2D2@b))
+  {
+    h2D2_pretrain(h2D2, W, NbetaHat, pre_mcmc_n, pre_use,
+                  pre_p, pre_maxiter, stepsize, seed)
+  }
+  
+  h2D2_sampling(h2D2, W, NbetaHat, mcmc_n, thin, stepsize, seed)
   
   #burn in
   h2D2@mcmc_samples[["n_burnin"]] = h2D2@mcmc_samples[["n_burnin"]] + burn_in

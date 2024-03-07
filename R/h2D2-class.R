@@ -42,7 +42,7 @@ setClass("h2D2",
            trait = "character",
            LD_pairs = "dgCMatrix",
            a = "numeric", #Shape parameter for sigma2
-           b = "numeric", #Shape parameter for 1-h2
+           b = "ANY", #Shape parameter for 1-h2
            mcmc_samples = "list",
            mcmc_mean = "list",
            mcmc_sd = "list",

@@ -5,11 +5,11 @@ rinvGauss <- function(nu, lambda) {
     .Call('_h2D2_rinvGauss', PACKAGE = 'h2D2', nu, lambda)
 }
 
-propose_lognormal <- function(x, stepsize = 2) {
-    .Call('_h2D2_propose_lognormal', PACKAGE = 'h2D2', x, stepsize)
+h2D2_pretrain <- function(h2D2, W, NbetaHat, pre_mcmc_n = 200L, pre_use = 100L, pre_p = 0.05, pre_maxiter = 10L, stepsize = 2, seed = 428L) {
+    invisible(.Call('_h2D2_h2D2_pretrain', PACKAGE = 'h2D2', h2D2, W, NbetaHat, pre_mcmc_n, pre_use, pre_p, pre_maxiter, stepsize, seed))
 }
 
-h2D2_sampling <- function(h2D2, W, N, NbetaHat, mcmc_n = 100L, thin = 1L, stepsize = 2, seed = 428L) {
-    invisible(.Call('_h2D2_h2D2_sampling', PACKAGE = 'h2D2', h2D2, W, N, NbetaHat, mcmc_n, thin, stepsize, seed))
+h2D2_sampling <- function(h2D2, W, NbetaHat, mcmc_n = 100L, thin = 1L, stepsize = 2, seed = 428L) {
+    invisible(.Call('_h2D2_h2D2_sampling', PACKAGE = 'h2D2', h2D2, W, NbetaHat, mcmc_n, thin, stepsize, seed))
 }
 

@@ -12,6 +12,7 @@
 #'                         trait = c("quantitative","binary"),
 #'                         in_sample_LD = F,
 #'                         a = 0.005,
+#'                         b = 1e4,
 #'                         coverage = 0.95,
 #'                         purity = 0.5)
 #'
@@ -26,7 +27,9 @@
 #' @param in_sample_LD Whether the LD matrix is in-sample.
 #' @param a Shape parameters for sigma^2. Either a positive real number or an
 #' M-vector of positive real numbers.
-#' @param b Shape parameter for 1-h^2. A positive real number.
+#' @param b Shape parameter for 1-h^2. Must be a positive real number.
+#' If the in-sample LD matrix is provided, we recommend setting b = NULL and
+#' b will be estimated by a pre-training process before MCMC.
 #' @param coverage A number between 0 and 1 specifying the "coverage"
 #' of the credible sets.
 #' @param purity A number between 0 and 1 specifying the minimum 
@@ -45,11 +48,13 @@ Createh2D2Object <- function(z,
                              trait = "quantitative",
                              in_sample_LD = F,
                              a = 0.005,
-                             b = NULL,
+                             b = 1e4,
                              coverage = 0.95,
-                             purity = 0.5)
+                             purity = 0.5,
+                             tol = 1e-8)
 {
   # Check z.
+  
   M = length(z)
   if(M <= 1)
   {
@@ -61,6 +66,7 @@ Createh2D2Object <- function(z,
   }
   
   # Check SNP ID.
+  
   if(is.null(SNP_ID))
   {
     SNP_ID = paste("SNP", 1:M, sep = "_")
@@ -73,6 +79,7 @@ Createh2D2Object <- function(z,
   }
   
   # Check R.
+  
   R = as.matrix(R)
   
   if(nrow(R) != M | ncol(R) != M)
@@ -100,24 +107,8 @@ Createh2D2Object <- function(z,
     warning("The diagonal elements of LD matrix are coerced to zeros.")
   }
   
-  # R_eig = eigen(R, symmetric = T)
-  # 
-  # if(R_eig$values[M] < -1)
-  # {
-  #   warning("LD matrix 'R' is not positive semidefinite.")
-  # }
-  
-  # Check N.
-  if(is.null(N))
-  {
-    stop("Sample size 'N' is required.")
-  }
-  if(length(N) >= 2)
-  {
-    stop("Sample size 'N' must be a number.")
-  }
-  
   # Check trait.
+  
   if(trait == "quantitative")
   {
     z = z / sqrt(1 + z^2 / N - 1 / N)
@@ -125,7 +116,20 @@ Createh2D2Object <- function(z,
     stop("'trait' must be either 'quantitative' or 'binary'.")
   }
   
+  # Projection
+  
+  if(!in_sample_LD)
+  {
+    R_eig = eigen(R, symmetric = T)
+    if(sum(R_eig$values + 1 < tol) > 0)
+    {
+      idx = which(R_eig$values + 1 >= tol)
+      z = (R_eig$vectors[,idx] %*% (t(R_eig$vectors[,idx]) %*% z))[,1]
+    }
+  }
+  
   # Hyper-parameters
+  
   if(length(a) == 1)
   {
     a = rep(a, M)
@@ -139,30 +143,16 @@ Createh2D2Object <- function(z,
     stop("Shape parameters 'a' should be positive.")
   }
   
-  if(is.null(b))
+  if(!is.null(b))
   {
-    if(in_sample_LD)
+    if(b <= 1)
     {
-      # Compute HDL estimate
-      h2_HDL = HDL(z, N, R = R)
-      b = sum(a) * (1 - h2_HDL) / h2_HDL
-      
-      if(b <= 1)
-      {
-        warning("Setting 'b' as default value 1e5.")
-        b = 1e5
-      }
-    } else {
-      b = 1e5
-    }
-  } else {
-    if(b < 1)
-    {
-      warning("Setting b<=1 may lead to divergent result.")
+      warning("Setting b<=1 may lead to a divergent result.")
     }
   }
   
   # Check coverage, purity, and rho
+  
   if(coverage < 0 | coverage > 1)
   {
     stop("Coverage must be in a range between 0 and 1.")
@@ -196,6 +186,5 @@ Createh2D2Object <- function(z,
              CL = rep(0,M),
              coverage = coverage,
              purity = purity,
-             CS = list()
-  ))
+             CS = list()))
 }

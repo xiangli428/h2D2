@@ -23,40 +23,45 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// propose_lognormal
-double propose_lognormal(double x, double stepsize);
-RcppExport SEXP _h2D2_propose_lognormal(SEXP xSEXP, SEXP stepsizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type stepsize(stepsizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(propose_lognormal(x, stepsize));
-    return rcpp_result_gen;
-END_RCPP
-}
-// h2D2_sampling
-void h2D2_sampling(S4 h2D2, const Eigen::SparseMatrix<double> W, const double N, const Eigen::VectorXd NbetaHat, int mcmc_n, int thin, double stepsize, unsigned int seed);
-RcppExport SEXP _h2D2_h2D2_sampling(SEXP h2D2SEXP, SEXP WSEXP, SEXP NSEXP, SEXP NbetaHatSEXP, SEXP mcmc_nSEXP, SEXP thinSEXP, SEXP stepsizeSEXP, SEXP seedSEXP) {
+// h2D2_pretrain
+void h2D2_pretrain(S4 h2D2, const Eigen::SparseMatrix<double> W, const Eigen::VectorXd NbetaHat, const int pre_mcmc_n, const int pre_use, const double pre_p, const int pre_maxiter, const double stepsize, const unsigned int seed);
+RcppExport SEXP _h2D2_h2D2_pretrain(SEXP h2D2SEXP, SEXP WSEXP, SEXP NbetaHatSEXP, SEXP pre_mcmc_nSEXP, SEXP pre_useSEXP, SEXP pre_pSEXP, SEXP pre_maxiterSEXP, SEXP stepsizeSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type h2D2(h2D2SEXP);
     Rcpp::traits::input_parameter< const Eigen::SparseMatrix<double> >::type W(WSEXP);
-    Rcpp::traits::input_parameter< const double >::type N(NSEXP);
     Rcpp::traits::input_parameter< const Eigen::VectorXd >::type NbetaHat(NbetaHatSEXP);
-    Rcpp::traits::input_parameter< int >::type mcmc_n(mcmc_nSEXP);
-    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< double >::type stepsize(stepsizeSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
-    h2D2_sampling(h2D2, W, N, NbetaHat, mcmc_n, thin, stepsize, seed);
+    Rcpp::traits::input_parameter< const int >::type pre_mcmc_n(pre_mcmc_nSEXP);
+    Rcpp::traits::input_parameter< const int >::type pre_use(pre_useSEXP);
+    Rcpp::traits::input_parameter< const double >::type pre_p(pre_pSEXP);
+    Rcpp::traits::input_parameter< const int >::type pre_maxiter(pre_maxiterSEXP);
+    Rcpp::traits::input_parameter< const double >::type stepsize(stepsizeSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type seed(seedSEXP);
+    h2D2_pretrain(h2D2, W, NbetaHat, pre_mcmc_n, pre_use, pre_p, pre_maxiter, stepsize, seed);
+    return R_NilValue;
+END_RCPP
+}
+// h2D2_sampling
+void h2D2_sampling(S4 h2D2, const Eigen::SparseMatrix<double> W, const Eigen::VectorXd NbetaHat, const int mcmc_n, const int thin, const double stepsize, const unsigned int seed);
+RcppExport SEXP _h2D2_h2D2_sampling(SEXP h2D2SEXP, SEXP WSEXP, SEXP NbetaHatSEXP, SEXP mcmc_nSEXP, SEXP thinSEXP, SEXP stepsizeSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type h2D2(h2D2SEXP);
+    Rcpp::traits::input_parameter< const Eigen::SparseMatrix<double> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd >::type NbetaHat(NbetaHatSEXP);
+    Rcpp::traits::input_parameter< const int >::type mcmc_n(mcmc_nSEXP);
+    Rcpp::traits::input_parameter< const int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< const double >::type stepsize(stepsizeSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type seed(seedSEXP);
+    h2D2_sampling(h2D2, W, NbetaHat, mcmc_n, thin, stepsize, seed);
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_h2D2_rinvGauss", (DL_FUNC) &_h2D2_rinvGauss, 2},
-    {"_h2D2_propose_lognormal", (DL_FUNC) &_h2D2_propose_lognormal, 2},
-    {"_h2D2_h2D2_sampling", (DL_FUNC) &_h2D2_h2D2_sampling, 8},
+    {"_h2D2_h2D2_pretrain", (DL_FUNC) &_h2D2_h2D2_pretrain, 9},
+    {"_h2D2_h2D2_sampling", (DL_FUNC) &_h2D2_h2D2_sampling, 7},
     {NULL, NULL, 0}
 };
 

@@ -11,6 +11,7 @@ h2D2 = Createh2D2Object(z,
                         trait = c("quantitative","binary"),
                         in_sample_LD = F,
                         a = 0.005,
+                        b = 1e4,
                         coverage = 0.95,
                         purity = 0.5)
 }
@@ -33,7 +34,9 @@ number of cases and the number of controls.}
 \item{a}{Shape parameters for sigma^2. Either a positive real number or an
 M-vector of positive real numbers.}
 
-\item{b}{Shape parameter for 1-h^2. A positive real number.}
+\item{b}{Shape parameter for 1-h^2. Must be a positive real number.
+If the in-sample LD matrix is provided, we recommend setting b = NULL and
+b will be estimated by a pre-training process before MCMC.}
 
 \item{coverage}{A number between 0 and 1 specifying the "coverage"
 of the credible sets.}

@@ -20,6 +20,18 @@ indicating no thinning.}
 \item{stepsize}{Step size for proposal.}
 
 \item{seed}{Random seed for MCMC sampling.}
+
+\item{pre_mcmc_n}{If b = NULL, a pre-training process will be used to
+estimate b before MCMC. This parameter specifies the number of MCMC
+iterations of each training.}
+
+\item{pre_use}{The number of samples used to estimate b in each pre 
+training.}
+
+\item{pre_p}{p value threshold to determine whether the pre training can
+be stopped.}
+
+\item{pre_maxiter}{Maximum number of pre-training iterations.}
 }
 \value{
 An h2D2 object with MCMC samples. See \code{\link{h2D2-class}}.
