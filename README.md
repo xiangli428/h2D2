@@ -34,6 +34,7 @@ h2D2 = Createh2D2Object(z,
 ```
 where `a` and `b` specify the hyperparameters of the prior.
 In v1.1, if `in_sample_LD = T`, we recommend setting `b = NULL` and `b` will be estimated by a pre-training process before MCMC.
+If `in_sample_LD = F`, the LD matrix may be rank-deficient. In this case, the z-score vector will be projected to the column space of LD matrix. See https://arxiv.org/abs/2401.15014 for more details.
 
 ### 3. MCMC sampling
 
