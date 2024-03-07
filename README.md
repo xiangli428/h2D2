@@ -1,4 +1,4 @@
-# h2D2
+# h2D2 v1.1
 
 The `h2D2` package implements a fine-mapping method based on the 
 "heritability-induced Dirichlet Decomposition" (h2-D2) prior.
