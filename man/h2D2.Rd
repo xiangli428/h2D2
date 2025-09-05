@@ -2,8 +2,8 @@
 % Please edit documentation in R/h2D2-package.R
 \docType{package}
 \name{h2D2}
-\alias{h2D2}
 \alias{h2D2-package}
+\alias{h2D2}
 \title{h2D2 package}
 \description{
 h2-D2: heritability-induced Dirichlet decomposition
@@ -17,7 +17,8 @@ This method can be applied to both quantitative and binary traits.
 An MCMC algorithm is employed to obtain samples from the posterior 
 distribution.
 This method can also provide "credible sets" of candidate causal variants, 
-which are generally provided by fine-mapping methods based on discrete-mixture priors.
+which are generally provided by fine-mapping methods based on 
+discrete-mixture priors.
 }
 \references{
 https://doi.org/10.1016/j.ajhg.2023.12.007

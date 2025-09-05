@@ -5,7 +5,7 @@
 #' "coverage" with minimum absolute correlation not less than "purity".
 #' 
 #' @param h2D2 An h2D2 object with MCMC samples.
-#' @param coverage A number between 0 and 1 specifying the "coverage"
+#' @param coverage A number between 0 and 1 specifying the required coverage
 #' of the credible sets.
 #' @param purity A number between 0 and 1 specifying the minimum 
 #' absolute correlation allowed in a credible set.
@@ -26,7 +26,8 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   {
     if(length(idx) >= 3)
     {
-      eig = eigs_sym(R[idx,idx], k = 1)
+      eig = tryCatch(eigs_sym(R[idx,idx], k = 1),
+                     error = function(e){eigen(R[idx,idx], symmetric = T)})
       v = beta[,idx] %*% eig$vectors[,1]
     } else {
       v = beta[,idx[1]] + beta[,idx[2]] * sign(R[idx[1],idx[2]])
@@ -35,6 +36,8 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   }
   
   M = h2D2@M
+  
+  beta = t(h2D2@mcmc_samples$beta)
   
   R = as.matrix(h2D2@R)
   
@@ -45,9 +48,7 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   }
   diag(R) = 1
   
-  CL = data.frame("index" = 1:M,
-                  "CL" = apply(h2D2@mcmc_samples$beta, 2, function(x){
-                    abs(sum(x > 0) - sum(x < 0)) / length(x)}))
+  CL = data.frame("index" = 1:M, "CL" = h2D2@CL)
   CL = arrange(CL, -CL, index)
   
   CS = list("sets" = list(), "CL" = c())
@@ -88,7 +89,7 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
           break
         }
       }
-      tmp_CL = set_CL(h2D2@mcmc_samples$beta, R, set)
+      tmp_CL = set_CL(beta, R, set)
     }
     
     if(tmp_CL >= coverage)
@@ -101,7 +102,7 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
           if(length(set) > 2)
           {
             k = which(set == l)
-            test_CL = set_CL(h2D2@mcmc_samples$beta, R, set[-k])
+            test_CL = set_CL(beta, R, set[-k])
             if(test_CL >= coverage)
             {
               set = set[-k]
@@ -132,7 +133,8 @@ h2D2_CS = function(h2D2, coverage = 0.95, purity = 0.5)
   {
     if(length(set) > 1)
     {
-      R_sub = abs(h2D2@R[set, set]@x)
+      R_sub = abs(R[set, set])
+      R_sub = R_sub[upper.tri(R_sub)]
       data.frame("min.abs.corr" = min(R_sub),
                  "mean.abs.corr" = mean(R_sub),
                  "median.abs.corr" = median(R_sub))

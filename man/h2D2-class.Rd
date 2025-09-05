@@ -14,21 +14,24 @@ credible sets. Objects can be created by Createh2D2Object.
 \describe{
 \item{\code{M}}{Number of SNPs.}
 
-\item{\code{N}}{GWAS sample size. For binary traits, 'N' is the sum of the
-number of cases and the number of controls.}
+\item{\code{N}}{GWAS sample size. For binary traits, 'N' is the sum of the number 
+of cases and the number of controls.}
 
 \item{\code{z}}{An M-vector of z-scores.}
 
 \item{\code{R}}{An M-by-M correlation matrix in \code{\link[Matrix]{dsCMatrix-class}} 
 format. The diagonal elements are set as 0.}
 
-\item{\code{SNP_ID}}{IDs of SNPs. A character vector of size M.}
+\item{\code{SNP_ID}}{IDs of SNPs. A character vector of length M.}
 
-\item{\code{trait}}{A character string. One of "quantitative" or "binary".}
+\item{\code{values}}{Eigenvalues of R (with diagonal elements as 1). An M-vector
+of nonnegative values.}
 
-\item{\code{LD_pairs}}{A \code{\link[Matrix]{dgCMatrix-class}} object stored SNP 
-pairs with |r|>=purity and transition probabilities used in MCMC algorithm to 
-select SNP pair for switching.}
+\item{\code{tvectors}}{An M-by-M matrix. Each column of its transpose is an
+eigenvector of R.}
+
+\item{\code{lambda}}{Hyper-parameter quantifying the discrepancy between z-scores
+and R.}
 
 \item{\code{a}}{An M-vector of shape parameters for sigma^2.}
 
@@ -51,6 +54,6 @@ credible sets.}
 \item{\code{purity}}{A number between 0 and 1 specifying the minimum absolute 
 correlation allowed in a credible set.}
 
-\item{\code{CS}}{A list of identified credible sets. See \code{\link{credible_sets}}.}
+\item{\code{CS}}{A list of identified credible sets. See \code{\link{h2D2_CS}}.}
 }}
 

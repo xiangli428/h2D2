@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: h2D2
 Type: Package
 Title: Heritability-induced Dirichlet Decomposition
-Version: 1.1
-Date: 2024-03-07
+Version: 2.0
+Date: 2025-09-05
 Authors@R:
     c(person("Xiang", "Li", email = "freddyl@connect.hku.hk",
         role = c("aut","cre")),
@@ -23,6 +23,8 @@ Description: This package implements a fine-mapping method based on the
     based on discrete-mixture priors.
 URL: https://github.com/xiangli428/h2D2
 License: GPL(>=2)
+Depends: R (>= 3.5.0)
 Imports: Rcpp (>= 1.0.9), RcppEigen, Matrix, foreach, dplyr, magrittr, RSpectra
 LinkingTo: Rcpp, RcppEigen
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.1
+LazyData: true

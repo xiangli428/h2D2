@@ -19,7 +19,8 @@
 #' An MCMC algorithm is employed to obtain samples from the posterior 
 #' distribution.
 #' This method can also provide "credible sets" of candidate causal variants, 
-#' which are generally provided by fine-mapping methods based on discrete-mixture priors.
+#' which are generally provided by fine-mapping methods based on 
+#' discrete-mixture priors.
 #' 
 #' @keywords internal
 #' 

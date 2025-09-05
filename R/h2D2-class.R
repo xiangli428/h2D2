@@ -6,16 +6,18 @@
 #' credible sets. Objects can be created by Createh2D2Object.
 #' 
 #' @slot M Number of SNPs.
-#' @slot N GWAS sample size. For binary traits, 'N' is the sum of the
-#' number of cases and the number of controls.
+#' @slot N GWAS sample size. For binary traits, 'N' is the sum of the number 
+#' of cases and the number of controls.
 #' @slot z An M-vector of z-scores.
 #' @slot R An M-by-M correlation matrix in \code{\link[Matrix]{dsCMatrix-class}} 
 #' format. The diagonal elements are set as 0.
-#' @slot SNP_ID IDs of SNPs. A character vector of size M.
-#' @slot trait A character string. One of "quantitative" or "binary".
-#' @slot LD_pairs A \code{\link[Matrix]{dgCMatrix-class}} object stored SNP 
-#' pairs with |r|>=purity and transition probabilities used in MCMC algorithm to 
-#' select SNP pair for switching.
+#' @slot SNP_ID IDs of SNPs. A character vector of length M.
+#' @slot values Eigenvalues of R (with diagonal elements as 1). An M-vector
+#' of nonnegative values.
+#' @slot tvectors An M-by-M matrix. Each column of its transpose is an
+#' eigenvector of R.
+#' @slot lambda Hyper-parameter quantifying the discrepancy between z-scores
+#' and R.
 #' @slot a An M-vector of shape parameters for sigma^2.
 #' @slot b Shape parameter for 1-h^2.
 #' @slot mcmc_samples A list storing MCMC samples.
@@ -28,7 +30,7 @@
 #' credible sets.
 #' @slot purity A number between 0 and 1 specifying the minimum absolute 
 #' correlation allowed in a credible set.
-#' @slot CS A list of identified credible sets. See \code{\link{credible_sets}}.
+#' @slot CS A list of identified credible sets. See \code{\link{h2D2_CS}}.
 #' 
 #' @export
 
@@ -39,8 +41,9 @@ setClass("h2D2",
            z = "numeric", #z-scores
            R = "dsCMatrix", #Genotype correlation, symmetric sparse, triu
            SNP_ID = "character",
-           trait = "character",
-           LD_pairs = "dgCMatrix",
+           values = "numeric",
+           tvectors = "matrix",
+           lambda = "numeric",
            a = "numeric", #Shape parameter for sigma2
            b = "ANY", #Shape parameter for 1-h2
            mcmc_samples = "list",

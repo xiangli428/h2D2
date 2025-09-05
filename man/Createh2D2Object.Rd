@@ -8,48 +8,59 @@ h2D2 = Createh2D2Object(z,
                         R,
                         N,
                         SNP_ID = NULL,
-                        trait = c("quantitative","binary"),
-                        in_sample_LD = F,
+                        in_sample_LD = FALSE,
+                        lambda = NULL,
+                        R_eig = NULL,
                         a = 0.005,
-                        b = 1e4,
+                        b = NULL,
                         coverage = 0.95,
-                        purity = 0.5)
+                        purity = 0.5,
+                        tol = 1e-8)
 }
 \arguments{
-\item{z}{M-vector of z-scores.}
+\item{z}{An M-vector of z-scores.}
 
 \item{R}{An M-by-M LD matrix that can be coerced to 
 \code{\link[Matrix]{dsCMatrix-class}}.
-The diagonal elements will be coerced to zeros.}
+The diagonal elements of 'R' will be coerced to zeros.}
 
 \item{N}{GWAS sample size. For binary traits, 'N' is the sum of the
 number of cases and the number of controls.}
 
 \item{SNP_ID}{Identifiers of SNPs. The default is c("SNP_1", ...).}
 
-\item{trait}{Either "quantitative" or "binary".}
+\item{in_sample_LD}{Logical. Setting in_sample_LD = TRUE if in-sample LD
+matrix is used.}
 
-\item{in_sample_LD}{Whether the LD matrix is in-sample.}
+\item{lambda}{Hyper-parameter quantifying the discrepancy between z-scores
+and R. If in_sample_LD == TRUE, lambda will be set as 0. Otherwise, if
+lambda is not provided, lambda will be estimated.}
+
+\item{R_eig}{An output of "eigen" function. A list with two components
+"values" and "vector". If in_sample_LD == TRUE, don't need to provide it.
+If provided, it will be used to create h2D2 object directly. Otherwise, 
+it will be computed.}
 
 \item{a}{Shape parameters for sigma^2. Either a positive real number or an
 M-vector of positive real numbers.}
 
-\item{b}{Shape parameter for 1-h^2. Must be a positive real number.
-If the in-sample LD matrix is provided, we recommend setting b = NULL and
-b will be estimated by a pre-training process before MCMC.}
+\item{b}{Shape parameter for 1-h^2. A positive real number. If not specified,
+it will be estimated by an empirical Bayesian approach.}
 
-\item{coverage}{A number between 0 and 1 specifying the "coverage"
+\item{coverage}{A number between 0 and 1 specifying the required coverage
 of the credible sets.}
 
 \item{purity}{A number between 0 and 1 specifying the minimum 
 absolute correlation allowed in a credible set.}
+
+\item{tol}{Eigenvalues less than tol will be coerced to zeros.}
 }
 \value{
 An h2D2 object. See \code{\link{h2D2-class}}.
-For quantitative traits, the input z-scores will be modified to
-z / sqrt(1 + z^2/N - 1/N).
+The input z-scores will be modified to z / sqrt(1 + z^2/N - 1/N).
 }
 \description{
 Create an h2D2 object from GWAS summary statistics and an LD matrix estimate.
-GWAS z-scores, h2-D2 hyper-parameters, and useful variables are stored.
+GWAS z-scores, LD matrix, h2-D2 hyper-parameters, MCMC samples, and outputs 
+are stored.
 }

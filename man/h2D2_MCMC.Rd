@@ -4,8 +4,11 @@
 \alias{h2D2_MCMC}
 \title{MCMC sampling under h2-D2 prior.}
 \usage{
-h2D2 = h2D2_MCMC(h2D2, mcmc_n = 10000, burn_in = 5000, 
-                 thin = 1, stepsize = 2, seed = 428)
+h2D2 = h2D2_MCMC(h2D2, mcmc_n = 5500, burn_in = 500, thin = 1, 
+                 stepsize = 2, seed = 428, get_CS = TRUE, 
+                 n_chain = 3, fold = 1.1,
+                 pre_mcmc_n = 400, pre_burn_in = 200, pre_p = 0.05,
+                 pre_maxiter = 10, pre_miniter = 2)
 }
 \arguments{
 \item{h2D2}{An h2D2 object.}
@@ -21,17 +24,26 @@ indicating no thinning.}
 
 \item{seed}{Random seed for MCMC sampling.}
 
-\item{pre_mcmc_n}{If b = NULL, a pre-training process will be used to
-estimate b before MCMC. This parameter specifies the number of MCMC
-iterations of each training.}
+\item{get_CS}{Logical. If get_CS = TRUE, detect CS after MCMC. Otherwise, 
+CS will not be detected.}
 
-\item{pre_use}{The number of samples used to estimate b in each pre 
-training.}
+\item{n_chain}{Number of parallel chains with different temperature.}
 
-\item{pre_p}{p value threshold to determine whether the pre training can
-be stopped.}
+\item{fold}{Fold change of temperature between two neighbored parallel chains.
+For instance, if \code{n_chain = 3} and \code{fold = 1.1}, the temperature
+for the three parallel chains will be 1, 1.1, 1.21.}
 
-\item{pre_maxiter}{Maximum number of pre-training iterations.}
+\item{pre_mcmc_n}{Number of posterior samples to generate in each iteration
+of pretraining. If b is given, the pretrain will not run.}
+
+\item{pre_burn_in}{Number of early samples to discard in each iteration of
+pretraining.}
+
+\item{pre_p}{p-value threshold for the pretraining.}
+
+\item{pre_maxiter}{Maximum number of pretraining iterations allowed.}
+
+\item{pre_miniter}{Minimum number of pretraining iterations required.}
 }
 \value{
 An h2D2 object with MCMC samples. See \code{\link{h2D2-class}}.

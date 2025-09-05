@@ -9,7 +9,7 @@ h2D2_CS(h2D2, coverage = 0.95, purity = 0.5)
 \arguments{
 \item{h2D2}{An h2D2 object with MCMC samples.}
 
-\item{coverage}{A number between 0 and 1 specifying the "coverage"
+\item{coverage}{A number between 0 and 1 specifying the required coverage
 of the credible sets.}
 
 \item{purity}{A number between 0 and 1 specifying the minimum 
