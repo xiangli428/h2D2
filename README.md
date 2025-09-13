@@ -55,7 +55,7 @@ process before MCMC.
 
 ```
 h2D2 = h2D2_MCMC(h2D2, mcmc_n = 5500, burn_in = 500, thin = 2, stepsize = 2, 
-                 seed = 428, get_CS = T, n_chain = 3, fold = 1.1,
+                 seed = 42, get_CS = T, n_chain = 3, fold = 1.1,
                  pre_mcmc_n = 400, pre_burn_in = 200, pre_p = 0.05,
                  pre_maxiter = 10, pre_miniter = 2)
 ```

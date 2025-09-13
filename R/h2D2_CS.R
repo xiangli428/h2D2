@@ -4,6 +4,9 @@
 #' A greedy search algorithm to identify all credible sets achieving target
 #' "coverage" with minimum absolute correlation not less than "purity".
 #' 
+#' @usage
+#' CS = h2D2_CS(h2D2, coverage = 0.95, purity = 0.5)
+#' 
 #' @param h2D2 An h2D2 object with MCMC samples.
 #' @param coverage A number between 0 and 1 specifying the required coverage
 #' of the credible sets.

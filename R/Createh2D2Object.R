@@ -198,7 +198,7 @@ Createh2D2Object <- function(z,
     }
   }
   
-  # Check coverage, purity, and rho
+  # Check coverage and purity
   
   if(coverage < 0 | coverage > 1)
   {

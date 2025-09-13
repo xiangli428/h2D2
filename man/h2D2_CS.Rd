@@ -4,7 +4,7 @@
 \alias{h2D2_CS}
 \title{Identify credible sets for h2D2 object.}
 \usage{
-h2D2_CS(h2D2, coverage = 0.95, purity = 0.5)
+CS = h2D2_CS(h2D2, coverage = 0.95, purity = 0.5)
 }
 \arguments{
 \item{h2D2}{An h2D2 object with MCMC samples.}
